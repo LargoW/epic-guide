@@ -451,6 +451,7 @@ document.addEventListener('click', e => {
   }
   if (d.refclose !== undefined) { tab = prevTab; render(); return scrollTo(0, 0); }
   if (d.ref) { refSec = d.ref; render(); return scrollTo(0, 0); }
+  if (d.rscen) { refScen = d.rscen; render(); return; }
   if (d.lay) { refLay = +d.lay; render(); return; }
   if (d.grid !== undefined) { refGrid = !refGrid; render(); return; }
   if (d.lang) S.lang = d.lang;

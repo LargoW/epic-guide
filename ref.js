@@ -1,5 +1,5 @@
 // Reference view: rules summaries and balanced terrain layouts (DE/EN). Opened from the header, not part of the game flow.
-let refSec = 'goals', refLay = 0, refGrid = true;
+let refSec = 'goals', refLay = 0, refGrid = true, refScen = null;
 
 const D = (de, en) => ({de, en});
 const tx = o => (typeof o === 'string' ? o : o[S.lang]);
@@ -13,7 +13,7 @@ const REF_SECS = {
 };
 
 const REF = {
-  goals: [
+  goalsTourn: [
     {h: D('Turnierszenario', 'Tournament scenario')},
     {p: D('Geprüft am Ende von Runde 3 und 4. Wer mindestens 2 der 5 Siegesbedingungen erfüllt und mehr als der Gegner, gewinnt. Beide Spieler können dieselbe Bedingung gleichzeitig erfüllen.',
           'Checked at the end of rounds 3 and 4. You win by achieving at least 2 of the 5 conditions and more than your opponent. Both players can meet the same condition at the same time.')},
@@ -33,15 +33,31 @@ const REF = {
       D('Die anderen 2 liegen in der eigenen Hälfte, ≥ 30 cm von der Kante und ≥ 30 cm von anderen Zielen.', 'The other 2 go in their own half, ≥ 30 cm from the edge and ≥ 30 cm from other objectives.'),
       D('Gehalten: eigene Einheit ≤ 15 cm und keine gegnerische. Umkämpft: beide Seiten ≤ 15 cm. Aufgeriebene oder soeben gesammelte Verbände können nicht erobern.', 'Held: own unit within 15 cm and no enemy. Contested: both sides within 15 cm. Broken or just-rallied formations cannot capture.'),
     ]},
+  ],
+
+  goalsFire: [
     {h: D('Zündet die Leuchtfeuer', 'Fire the Beacons')},
+    {p: D('3 Runden. Siegesbedingungen werden nach jeder Runde (ab Runde 1) und VOR dem Sammeln geprüft. Beide Spieler können jede Bedingung gleichzeitig erfüllen; die Punkte werden über alle Runden addiert.',
+          '3 rounds. Victory conditions are checked after every round (from round 1) and BEFORE rallying. Both players can meet every condition at the same time; points add up over all rounds.')},
+    {table: {head: [D('Bedingung', 'Condition'), D('Punkte', 'Points'), D('Beschreibung', 'Description')], rows: [
+      [D('Blitzkrieg', 'Blitzkrieg'), D('1 / Runde', '1 / round'), D('Das Ziel an der gegnerischen Tischkante besitzen.', 'Own the objective on the enemy table edge.')],
+      [D('Brecht Ihren Willen', 'Break Their Spirit'), D('2, einmalig', '2, once only'), D('Den Verband mit dem höchsten Punktwert des Gegners vernichten (aufgerieben zählt nicht). Pro Spieler nur einmal im Spiel.', 'Destroy the enemy formation with the highest points value (broken does not count). Once per player per game.')],
+      [D('Verteidigt Die Flagge', 'Defend The Flag'), D('1 / Runde', '1 / round'), D('Alle 3 Ziele in der eigenen Hälfte besitzen und nicht umkämpft haben.', 'Own all 3 objectives in your own half, with none contested.')],
+      [D('Sichern Und Halten', 'Take And Hold'), D('1 / Runde', '1 / round'), D('2 Ziele in der gegnerischen Hälfte besitzen.', 'Own 2 objectives in the enemy half.')],
+      [D('Sie Können Nicht Vorbei', 'They Shall Not Pass'), D('1 / Runde', '1 / round'), D('Keine ungebrochenen gegnerischen Verbände in der eigenen Hälfte.', 'No unbroken enemy formations in your half.')],
+    ]}},
+    {h: D('Besitz der Ziele', 'Objective ownership')},
     {ul: [
-      D('3 Runden; Siegesbedingungen nach jeder Runde (ab Runde 1) und VOR dem Sammeln.', '3 rounds; victory conditions checked after every round (from round 1) and BEFORE rallying.'),
-      D('Jedes Ziel gehört anfangs dem Spieler seiner Hälfte und behält den Besitzer, auch wenn Einheiten abziehen.', 'Each objective starts with the owner of its half and keeps its owner even after units leave.'),
+      D('6 Ziele mit zweiseitigen Markern: Jedes gehört anfangs dem Spieler seiner Hälfte und behält den Besitzer, auch wenn Einheiten abziehen.', '6 objectives with two-sided markers: each starts with the owner of its half and keeps its owner even after units leave.'),
       D('Nach jeder Aktion wechselt ein Ziel den Besitzer, wenn nur eine ungebrochene gegnerische Einheit ≤ 15 cm steht (gesammelte Einheiten zählen).', 'After every action an objective flips if only an unbroken enemy unit is within 15 cm (rallied units count).'),
-      D('Blitz-Ziel ≥ 15 cm von jeder Ecke; die anderen ≥ 15 cm von jeder Kante; nie in unpassierbarem Gelände.', 'Blitz objective ≥ 15 cm from every corner; the others ≥ 15 cm from every edge; never in impassable terrain.'),
-      D('Brecht Ihren Willen: einmalig 2 Punkte, alle anderen 1 Punkt je Runde.', 'Break Their Spirit: 2 points once; all others 1 point per round.'),
+      D('Umkämpfen: Ein ungebrochener Gegner ≤ 15 cm verhindert „Verteidigt Die Flagge“, auch wenn das Ziel dir gehört.', 'Contesting: an unbroken enemy within 15 cm prevents Defend The Flag even if you own the objective.'),
+      D('Eigene Einheiten müssen nicht ≤ 15 cm stehen, um Punkte zu erhalten.', 'Your own units need not be within 15 cm to score.'),
+      D('Platzierung: Blitz-Ziel ≥ 15 cm von jeder Ecke; die anderen ≥ 15 cm von jeder Kante; nie in unpassierbarem Gelände.', 'Placement: Blitz objective ≥ 15 cm from every corner; the others ≥ 15 cm from every edge; never in impassable terrain.'),
+    ]},
+    {h: D('Sieg & Sonderfälle', 'Winning & special cases')},
+    {ul: [
+      D('Sieger ist, wer nach Runde 3 mehr Punkte hat; die Differenz bestimmt die Turnierpunkte.', 'The winner has more points after round 3; the difference sets the tournament points.'),
       D('Vorsprung ≥ 8 SP nach Runde 2 beendet das Spiel vorzeitig.', 'A lead of ≥ 8 VP after round 2 ends the game early.'),
-      D('Eigene Einheiten müssen nicht ≤ 15 cm stehen, um Punkte zu erhalten – aber ein ungebrochener Gegner ≤ 15 cm umkämpft das Ziel.', 'Your units need not be within 15 cm to score, but an unbroken enemy within 15 cm contests the objective.'),
       D('Gelandete Flieger können in ihrer Landerunde weder erobern noch umkämpfen noch „Sie Können Nicht Vorbei“ verhindern.', 'Landed aircraft cannot capture, contest or stop They Shall Not Pass in the round they land.'),
     ]},
   ],
@@ -293,7 +309,11 @@ function viewRef() {
   const t = T();
   const chips = Object.keys(REF_SECS).map(k =>
     `<button data-ref="${k}" class="${k === refSec ? 'on' : ''}"><span>${REF_SECS[k][0]}</span>${tx(REF_SECS[k][1])}</button>`).join('');
-  const body = refSec === 'layouts' ? viewLayouts() : REF[refSec].map(refBlock).join('');
+  const sc = refScen || S.scenario;
+  const toggle = refSec === 'goals' ? `<div class="row" style="margin-bottom:12px">${[['fire', t.scenFire], ['tourn', t.scenTourn]].map(([k, n]) =>
+    `<button data-rscen="${k}" class="${sc === k ? 'on' : ''}">${n}</button>`).join('')}</div>` : '';
+  const blocks = refSec === 'goals' ? REF[sc === 'fire' ? 'goalsFire' : 'goalsTourn'] : REF[refSec];
+  const body = refSec === 'layouts' ? viewLayouts() : toggle + blocks.map(refBlock).join('');
   return `<div class="card"><h2>📖 ${S.lang === 'de' ? 'Referenz' : 'Reference'}</h2><div class="chips">${chips}</div></div>
     <div class="card refbody">${body}</div>
     <button data-refclose style="width:100%">${S.lang === 'de' ? '✕ Referenz schließen' : '✕ Close reference'}</button>`;
