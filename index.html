@@ -75,13 +75,13 @@ header{flex-wrap:wrap}
 .mode{display:flex;width:100%;background:rgba(255,255,255,.08);border-radius:14px;padding:3px}
 .mode button{flex:1;min-height:0;padding:8px 6px;font-size:14px;font-weight:700;border-radius:11px;background:none;border:0;color:var(--mut)}
 .mode button.on{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1200}
-.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
 .chips button{flex:none;min-height:0;padding:8px 12px;font-size:13px;border-radius:999px}
 .chips button span{margin-right:4px}
 .rh{margin:16px 0 6px;font-size:15px;color:var(--gold)}.refbody .rh:first-child{margin-top:0}
 .rp{margin:6px 0;font-size:14px}
 .rl{margin:6px 0;padding-left:20px;font-size:14px}.rl li{margin-bottom:6px}
-.rt{overflow-x:auto;margin:8px 0}.rt td,.rt th{font-size:13px;text-align:left;vertical-align:top;padding:7px 6px}.rt th{color:var(--mut);font-weight:600}
+.rt{margin:8px 0}.rt table{width:100%;table-layout:auto}.rt td,.rt th{overflow-wrap:anywhere;word-break:break-word}.rt td,.rt th{font-size:13px;text-align:left;vertical-align:top;padding:7px 6px}.rt th{color:var(--mut);font-weight:600}
 .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;margin:4px 0 8px}.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
 button{overflow-wrap:anywhere;line-height:1.2}
 .laygrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:8px;margin-bottom:10px}
