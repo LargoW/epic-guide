@@ -156,15 +156,33 @@ const REF = {
 // Balanced layouts: 180×120 cm table, 60 cm squares, 12 pieces. Only the top half (y < 60) is listed;
 // the bottom half is its 180° rotation, so both sides (long edge or corner deployment) are identical.
 // Pieces: [type, centre x, centre y, width, height]
+// Colourblind-safe: Okabe-Ito palette, plus a unique pattern, shape and letter code per type (never colour alone).
 const TERR = {
-  building: ['#8a8f98', D('Gebäude', 'Building'), 'r'],
-  ruins: ['#9c6b4a', D('Ruinen', 'Ruins'), 'r'],
-  woods: ['#2f8f4e', D('Wald', 'Woods'), 'e'],
-  hill: ['#d08a3c', D('Hügel', 'Hill'), 'e'],
-  jungle: ['#14705f', D('Dschungel', 'Jungle'), 'e'],
-  river: ['#3b8ed0', D('Fluss', 'River'), 'r'],
-  brush: ['#b4d36b', D('Gestrüpp (Krater, Felder)', 'Scrub (craters, fields)'), 'e'],
+  building: {c: '#999999', n: D('Gebäude', 'Building'), s: 'r', p: 'solid', k: D('G', 'B')},
+  ruins: {c: '#CC79A7', n: D('Ruinen', 'Ruins'), s: 'r', p: 'diag', k: D('R', 'R'), dash: true},
+  woods: {c: '#009E73', n: D('Wald', 'Woods'), s: 'e', p: 'dots', k: D('W', 'W')},
+  jungle: {c: '#0072B2', n: D('Dschungel', 'Jungle'), s: 'e', p: 'cross', k: D('D', 'J')},
+  hill: {c: '#E69F00', n: D('Hügel', 'Hill'), s: 'e', p: 'lines', k: D('H', 'H')},
+  brush: {c: '#F0E442', n: D('Gestrüpp (Krater, Felder)', 'Scrub (craters, fields)'), s: 'e', p: 'ticks', k: D('S', 'S')},
+  river: {c: '#56B4E9', n: D('Fluss', 'River'), s: 'r', p: 'wave', k: D('F', 'R')},
 };
+const PAT_DEFS = `<defs>
+  <pattern id="p-diag" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M-1 5L5 -1M-1 1L1 -1M3 5L5 3" stroke="#000" stroke-opacity=".6" stroke-width=".8"/></pattern>
+  <pattern id="p-dots" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#000" fill-opacity=".6"/></pattern>
+  <pattern id="p-cross" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 0L4 4M4 0L0 4" stroke="#fff" stroke-opacity=".7" stroke-width=".7"/></pattern>
+  <pattern id="p-lines" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 2H4" stroke="#000" stroke-opacity=".6" stroke-width=".8"/></pattern>
+  <pattern id="p-ticks" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M2 0V4" stroke="#000" stroke-opacity=".6" stroke-width=".8"/></pattern>
+  <pattern id="p-wave" width="8" height="6" patternUnits="userSpaceOnUse"><path d="M0 3Q2 0 4 3T8 3" fill="none" stroke="#000" stroke-opacity=".6" stroke-width=".8"/></pattern>
+  <pattern id="p-za" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M-1 5L5 -1M-1 1L1 -1M3 5L5 3" stroke="#fff" stroke-opacity=".5" stroke-width=".8"/></pattern>
+  <pattern id="p-zb" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 2H4" stroke="#fff" stroke-opacity=".5" stroke-width=".8"/></pattern>
+</defs>`;
+function terrShape(t, x, y, w, h) {
+  const T0 = TERR[t], st = `stroke="#fff" stroke-width="${T0.dash ? .8 : .6}"${T0.dash ? ' stroke-dasharray="2 1.2"' : ''}`;
+  const geo = T0.s === 'e'
+    ? (f => `<ellipse cx="${x}" cy="${y}" rx="${w / 2}" ry="${h / 2}" ${f}/>`)
+    : (f => `<rect x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}" rx="1.5" ${f}/>`);
+  return geo(`fill="${T0.c}"`) + (T0.p === 'solid' ? '' : geo(`fill="url(#p-${T0.p})"`)) + geo(`fill="none" ${st}`);
+}
 const LAYOUTS = [
   {
     name: D('A · Ausgewogener Mix', 'A · Balanced mix'),
@@ -211,10 +229,8 @@ function layoutPieces(l) {
 }
 
 function pieceSvg([t, x, y, w, h]) {
-  const [c, , shape] = TERR[t];
-  return shape === 'e'
-    ? `<ellipse cx="${x}" cy="${y}" rx="${w / 2}" ry="${h / 2}" fill="${c}" fill-opacity=".85" stroke="#fff" stroke-opacity=".6" stroke-width=".5"/>`
-    : `<rect x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}" rx="1.5" fill="${c}" fill-opacity=".85" stroke="#fff" stroke-opacity=".6" stroke-width=".5"/>`;
+  return terrShape(t, x, y, w, h) +
+    `<text x="${x}" y="${y + 2.4}" class="pk">${esc(tx(TERR[t].k))}</text>`;
 }
 
 function layoutSvg(l) {
@@ -225,18 +241,21 @@ function layoutSvg(l) {
   let river = '';
   if (l.river) {
     counts[1]++; counts[4]++;
-    river = `<rect x="86" y="0" width="8" height="120" fill="${TERR.river[0]}" fill-opacity=".85"/>` +
-      [15, 45, 75, 105].map(y => `<rect x="85" y="${y - 4}" width="10" height="8" fill="#c9b27c" stroke="#fff" stroke-opacity=".6" stroke-width=".4"/>`).join('');
+    river = terrShape('river', 90, 60, 8, 120) +
+      [15, 45, 75, 105].map(y => `<rect x="85" y="${y - 4}" width="10" height="8" fill="#ddd" stroke="#000" stroke-width=".5"/><path d="M85 ${y - 1.5}H95M85 ${y + 1.5}H95" stroke="#000" stroke-width=".5"/>`).join('');
   }
   const grid = refGrid ? [60, 120].map(x => `<line x1="${x}" y1="0" x2="${x}" y2="120" class="gl"/>`).join('') + `<line x1="0" y1="60" x2="180" y2="60" class="gl"/>` +
     counts.map((n, i) => `<text x="${(i % 3) * 60 + 4}" y="${Math.floor(i / 3) * 60 + 9}" class="cn">${n}</text>`).join('') : '';
-  const a = '#4aa8ff', b = '#ff6b5b';
+  const a = '#0072B2', b = '#D55E00';
+  const zone = (pts, col, pat) => `<polygon points="${pts}" fill="${col}" fill-opacity=".75"/><polygon points="${pts}" fill="url(#p-${pat})"/><polygon points="${pts}" fill="none" stroke="${col}" stroke-width=".8"/>`;
+  const lab = (x, y, p) => `<text x="${x}" y="${y}" class="zt">${p === 'A' ? '▲' : '■'} ${esc(nm(p))}</text>`;
   const zones = mode === 'long'
-    ? `<rect x="0" y="0" width="180" height="15" fill="${a}" fill-opacity=".3"/><rect x="0" y="105" width="180" height="15" fill="${b}" fill-opacity=".3"/>`
-    : `<polygon points="0,0 90,0 90,15 15,15 15,60 0,60" fill="${a}" fill-opacity=".35"/><polygon points="180,120 90,120 90,105 165,105 165,60 180,60" fill="${b}" fill-opacity=".35"/>`;
+    ? zone('0,0 180,0 180,15 0,15', a, 'za') + zone('0,105 180,105 180,120 0,120', b, 'zb') + lab(94, 10, 'A') + lab(90, 114.5, 'B')
+    : zone('0,0 90,0 90,15 15,15 15,60 0,60', a, 'za') + zone('180,120 90,120 90,105 165,105 165,60 180,60', b, 'zb') + lab(36, 10, 'A') + lab(128, 114.5, 'B');
   return `<svg class="board" viewBox="-4 -4 188 128" xmlns="http://www.w3.org/2000/svg">
-    <style>.gl{stroke:#fff;stroke-opacity:.35;stroke-dasharray:2 2;stroke-width:.4}.cn{font:700 6px system-ui;fill:#fff;fill-opacity:.7}</style>
-    <rect x="0" y="0" width="180" height="120" fill="#1f3324" rx="2"/>${zones}${river}${pcs.map(pieceSvg).join('')}${grid}
+    <style>.gl{stroke:#fff;stroke-opacity:.5;stroke-dasharray:2 2;stroke-width:.4}.cn{font:700 6px system-ui;fill:#fff;stroke:#000;stroke-width:1.2;paint-order:stroke}.pk{font:800 7px system-ui;text-anchor:middle;fill:#fff;stroke:#000;stroke-width:1.6;paint-order:stroke}.zt{font:700 6px system-ui;text-anchor:middle;fill:#fff;stroke:#000;stroke-width:1.2;paint-order:stroke}</style>
+    ${PAT_DEFS}
+    <rect x="0" y="0" width="180" height="120" fill="#232a33" rx="2"/>${zones}${river}${pcs.map(pieceSvg).join('')}${grid}
     <rect x="0" y="0" width="180" height="120" fill="none" stroke="#fff" stroke-opacity=".5" rx="2"/></svg>`;
 }
 
@@ -265,7 +284,7 @@ function viewLayouts() {
     <div class="row" style="margin-bottom:10px">${['long', 'corner'].map(k => `<button data-dep="${k}" class="${S.deploy === k ? 'on' : ''}">${t[k]}</button>`).join('')}
       <button data-grid class="${refGrid ? 'on' : ''}">${msg[1]}</button></div>
     ${layoutSvg(l)}
-    <div class="legend">${used.map(k => `<span><i style="background:${TERR[k][0]}"></i>${tx(TERR[k][1])}</span>`).join('')}</div>
+    <div class="legend">${used.map(k => `<span><svg width="22" height="16" viewBox="0 0 22 16">${PAT_DEFS}${terrShape(k, 11, 8, 18, 12)}<text x="11" y="11" class="pk" style="font-size:8px">${esc(tx(TERR[k].k))}</text></svg>${tx(TERR[k].n)}</span>`).join('')}</div>
     <p class="rp">${esc(tx(l.note))}</p>
     <p class="rp mut">${esc(msg[0])}${refGrid ? ' (' + msg[2] + ')' : ''}</p>`;
 }
