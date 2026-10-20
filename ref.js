@@ -7,7 +7,7 @@ const tx = o => (typeof o === 'string' ? o : o[S.lang]);
 const REF_SECS = {
   goals: ['🏁', D('Ziele', 'Goals')],
   terrain: ['⛰', D('Gelände', 'Terrain')],
-  barrage: ['💥', D('Sperrfeuer', 'Barrage')],
+  barrage: ['💥', D('Sperrfeuer Tabelle', 'Barrage Table')],
   combat: ['⚔', D('Kampf', 'Combat')],
   layouts: ['🧭', D('Layouts', 'Layouts')],
 };
@@ -161,6 +161,8 @@ const TERR = {
   ruins: ['#9c6b4a', D('Ruinen', 'Ruins'), 'r'],
   woods: ['#2f8f4e', D('Wald', 'Woods'), 'e'],
   hill: ['#d08a3c', D('Hügel', 'Hill'), 'e'],
+  jungle: ['#14705f', D('Dschungel', 'Jungle'), 'e'],
+  river: ['#3b8ed0', D('Fluss', 'River'), 'r'],
   brush: ['#b4d36b', D('Gestrüpp (Krater, Felder)', 'Scrub (craters, fields)'), 'e'],
 };
 const LAYOUTS = [
@@ -178,9 +180,28 @@ const LAYOUTS = [
   },
   {
     name: D('C · Zerstörte Stadt', 'C · Destroyed city'),
-    note: D('Ein diagonales Ruinenfeld über die Mitte (3 Stücke je mittlerem Quadrat) als umkämpfte Zone; Wald, Gestrüpp und Hügel auf den Flanken. Große Ruinen sind der Kern, ein einzelnes Gebäude bleibt stehen.',
-            'A diagonal field of ruins across the centre (3 pieces per middle square) as the contested zone; woods, scrub and hills on the flanks. Large ruins form the core, a single building is still standing.'),
-    top: [['woods', 30, 34, 24, 24], ['ruins', 78, 40, 28, 22], ['ruins', 106, 50, 28, 22], ['building', 100, 22, 16, 16], ['brush', 160, 30, 22, 14], ['hill', 140, 52, 26, 18]],
+    note: D('Ruinenfelder auf beiden Flanken, in der Mitte nur zwei Ruinen und ein Gebäude: klare Schusslinien, Deckung an den Seiten.',
+            'Ruin fields on both flanks, only two ruins and a building in the centre: clear lines of fire, cover on the sides.'),
+    top: [['ruins', 28, 30, 26, 22], ['brush', 45, 52, 18, 14], ['ruins', 78, 34, 28, 22], ['building', 108, 50, 16, 16], ['ruins', 152, 30, 26, 22], ['brush', 135, 52, 18, 14]],
+  },
+  {
+    name: D('D · Ausgewogen 2', 'D · Balanced 2'),
+    note: D('Je ein Stück jeder Hauptgeländeart verteilt: Gebäude, Wald, Ruinen, Hügel, Gestrüpp. Keine Seite und kein Quadrat bevorzugt.',
+            'One piece of each main terrain type spread out: building, woods, ruins, hill, scrub. No side or square favoured.'),
+    top: [['building', 28, 30, 16, 16], ['woods', 48, 50, 22, 20], ['ruins', 85, 34, 28, 22], ['hill', 112, 50, 26, 18], ['brush', 135, 32, 22, 14], ['ruins', 158, 48, 24, 20]],
+  },
+  {
+    name: D('E · Dschungel & Wald', 'E · Jungle & woods'),
+    note: D('Viel Dschungel und Wald: kurze Sichtlinien, Infanterie im Vorteil, Fahrzeuge brauchen Wege. Dschungel ist gefährlich für AV/Kriegsmaschinen (4+ Deckung, schwierig für INF) – nur eine Ruine als Fixpunkt in der Mitte.',
+            'Lots of jungle and woods: short lines of sight, favours infantry, vehicles need lanes. Jungle is dangerous for AV/war engines (4+ cover, difficult for INF) – only one ruin as a landmark in the centre.'),
+    top: [['jungle', 28, 30, 28, 28], ['woods', 54, 52, 22, 20], ['jungle', 85, 30, 26, 26], ['ruins', 110, 50, 24, 18], ['woods', 135, 32, 26, 26], ['jungle', 162, 48, 26, 24]],
+  },
+  {
+    name: D('F · Flussübergang', 'F · River crossing'),
+    note: D('Ein Fluss (zählt als 2 Stücke, eines je gekreuztem Quadrat) quer durch die Mitte mit Brücke/Furt alle 30 cm. Gelände auf den Seiten bietet Deckung beim Übergang.',
+            'A river (counts as 2 pieces, one per square crossed) through the centre with a bridge/ford every 30 cm. Terrain on the banks gives cover at the crossing.'),
+    river: true,
+    top: [['building', 28, 30, 16, 16], ['woods', 48, 50, 22, 20], ['ruins', 112, 40, 26, 22], ['woods', 145, 32, 26, 26], ['brush', 160, 52, 22, 14]],
   },
 ];
 
@@ -201,6 +222,12 @@ function layoutSvg(l) {
   const counts = Array(6).fill(0);
   const sq = (x, y) => Math.min(2, Math.floor(x / 60)) + 3 * Math.min(1, Math.floor(y / 60));
   pcs.forEach(p => counts[sq(p[1], p[2])]++);
+  let river = '';
+  if (l.river) {
+    counts[1]++; counts[4]++;
+    river = `<rect x="86" y="0" width="8" height="120" fill="${TERR.river[0]}" fill-opacity=".85"/>` +
+      [15, 45, 75, 105].map(y => `<rect x="85" y="${y - 4}" width="10" height="8" fill="#c9b27c" stroke="#fff" stroke-opacity=".6" stroke-width=".4"/>`).join('');
+  }
   const grid = refGrid ? [60, 120].map(x => `<line x1="${x}" y1="0" x2="${x}" y2="120" class="gl"/>`).join('') + `<line x1="0" y1="60" x2="180" y2="60" class="gl"/>` +
     counts.map((n, i) => `<text x="${(i % 3) * 60 + 4}" y="${Math.floor(i / 3) * 60 + 9}" class="cn">${n}</text>`).join('') : '';
   const a = '#4aa8ff', b = '#ff6b5b';
@@ -209,7 +236,7 @@ function layoutSvg(l) {
     : `<polygon points="0,0 90,0 90,15 15,15 15,60 0,60" fill="${a}" fill-opacity=".35"/><polygon points="180,120 90,120 90,105 165,105 165,60 180,60" fill="${b}" fill-opacity=".35"/>`;
   return `<svg class="board" viewBox="-4 -4 188 128" xmlns="http://www.w3.org/2000/svg">
     <style>.gl{stroke:#fff;stroke-opacity:.35;stroke-dasharray:2 2;stroke-width:.4}.cn{font:700 6px system-ui;fill:#fff;fill-opacity:.7}</style>
-    <rect x="0" y="0" width="180" height="120" fill="#1f3324" rx="2"/>${zones}${pcs.map(pieceSvg).join('')}${grid}
+    <rect x="0" y="0" width="180" height="120" fill="#1f3324" rx="2"/>${zones}${river}${pcs.map(pieceSvg).join('')}${grid}
     <rect x="0" y="0" width="180" height="120" fill="none" stroke="#fff" stroke-opacity=".5" rx="2"/></svg>`;
 }
 
@@ -228,7 +255,7 @@ function refBlock(b) {
 
 function viewLayouts() {
   const l = LAYOUTS[refLay], t = T();
-  const used = [...new Set(layoutPieces(l).map(p => p[0]))];
+  const used = [...new Set(layoutPieces(l).map(p => p[0]).concat(l.river ? ['river'] : []))];
   const msg = S.lang === 'de'
     ? ['Gleichgewicht: Die Layouts sind 180°-punktsymmetrisch – beide Seiten haben identisches Gelände, egal ob Lange Kante oder Ecke. 12 Stücke (2 je 60-cm-Quadrat), 15–30 cm groß, 0–4 Stücke je Quadrat. Ziele und Straßen werden danach platziert.',
        'Raster', 'Zahl = Stücke je Quadrat']
