@@ -71,8 +71,10 @@ nav{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-b
 nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;min-height:0;font-size:11px;background:none;border:0;color:var(--mut);border-radius:16px}
 nav button span{font-size:20px;line-height:1.1}
 nav button.on{background:rgba(240,180,41,.15);color:var(--gold);font-weight:700}
-.refbtn{width:40px;min-height:0;height:36px;padding:0;font-size:18px;border-radius:12px}
-.refbtn.on{color:#1a1200}
+header{flex-wrap:wrap}
+.mode{display:flex;width:100%;background:rgba(255,255,255,.08);border-radius:14px;padding:3px}
+.mode button{flex:1;min-height:0;padding:8px 6px;font-size:14px;font-weight:700;border-radius:11px;background:none;border:0;color:var(--mut)}
+.mode button.on{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1200}
 .chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
 .chips button{flex:none;min-height:0;padding:8px 12px;font-size:13px;border-radius:999px}
 .chips button span{margin-right:4px}
@@ -87,8 +89,8 @@ nav button.on{background:rgba(240,180,41,.15);color:var(--gold);font-weight:700}
 <header>
   <div class="logo">⚔</div>
   <h1><span id="ttl"></span><small id="sub"></small></h1>
-  <button class="refbtn" data-refopen aria-label="Reference">📖</button>
   <div class="lang"><button data-lang="de">DE</button><button data-lang="en">EN</button></div>
+  <div class="mode" id="mode"></div>
 </header>
 <main id="app"></main>
 <nav id="nav"></nav>
@@ -425,7 +427,10 @@ function render() {
   document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('on', b.dataset.lang === S.lang));
   const tabs = TABS.filter(k => isFire() || k !== 'beacon');
   if (tab !== 'ref' && !tabs.includes(tab)) tab = 'setup';
-  document.querySelector('.refbtn').classList.toggle('on', tab === 'ref');
+  const inRef = tab === 'ref';
+  document.getElementById('mode').innerHTML =
+    `<button data-mode="game" class="${inRef ? '' : 'on'}">🎮 ${S.lang === 'de' ? 'Spiel' : 'Game'}</button>` +
+    `<button data-mode="ref" class="${inRef ? 'on' : ''}">📖 ${S.lang === 'de' ? 'Referenz' : 'Reference'}</button>`;
   document.getElementById('nav').innerHTML = tabs.map(k =>
     `<button data-t="${k}" class="${k === tab ? 'on' : ''}"><span>${t.tabs[k][0]}</span>${t.tabs[k][1]}</button>`).join('');
   document.getElementById('app').innerHTML = {warm: viewWarm, setup: viewSetup, turn: viewTurn, beacon: viewBeacon, score: viewScore, ref: viewRef}[tab]();
@@ -435,7 +440,11 @@ document.addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   const d = b.dataset;
   if (d.t) { tab = d.t; render(); return scrollTo(0, 0); }
-  if (d.refopen !== undefined) { if (tab === 'ref') tab = prevTab; else { prevTab = tab; tab = 'ref'; } render(); return scrollTo(0, 0); }
+  if (d.mode) {
+    if (d.mode === 'ref' && tab !== 'ref') { prevTab = tab; tab = 'ref'; }
+    else if (d.mode === 'game' && tab === 'ref') tab = prevTab;
+    render(); return scrollTo(0, 0);
+  }
   if (d.refclose !== undefined) { tab = prevTab; render(); return scrollTo(0, 0); }
   if (d.ref) { refSec = d.ref; render(); return scrollTo(0, 0); }
   if (d.lay) { refLay = +d.lay; render(); return; }
