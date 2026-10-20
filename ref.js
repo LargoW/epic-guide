@@ -261,7 +261,7 @@ function viewLayouts() {
        'Raster', 'Zahl = Stücke je Quadrat']
     : ['Balance: layouts are 180° point-symmetric – both sides get identical terrain whether you use Long Edge or Corner. 12 pieces (2 per 60 cm square), 15–30 cm each, 0–4 per square. Objectives and roads are placed afterwards.',
        'Grid', 'Number = pieces per square'];
-  return `<div class="row wrap" style="margin-bottom:10px">${LAYOUTS.map((x, i) => `<button data-lay="${i}" class="${i === refLay ? 'on' : ''}">${esc(tx(x.name))}</button>`).join('')}</div>
+  return `<div class="laygrid">${LAYOUTS.map((x, i) => `<button data-lay="${i}" class="${i === refLay ? 'on' : ''}">${esc(tx(x.name))}</button>`).join('')}</div>
     <div class="row" style="margin-bottom:10px">${['long', 'corner'].map(k => `<button data-dep="${k}" class="${S.deploy === k ? 'on' : ''}">${t[k]}</button>`).join('')}
       <button data-grid class="${refGrid ? 'on' : ''}">${msg[1]}</button></div>
     ${layoutSvg(l)}
