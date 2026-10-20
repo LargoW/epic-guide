@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0f17">
+<link rel="manifest" href="manifest.json">
+<title>Epic Guide</title>
+<style>
+:root{--bg:#0b0f17;--card:rgba(255,255,255,.055);--line:rgba(255,255,255,.09);--fg:#eef1f6;--mut:#94a0b4;--gold:#f0b429;--gold2:#c98a0b;--a:#4aa8ff;--b:#ff6b5b;--ok:#3ecf8e}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;color:var(--fg);font:16px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh;
+ background:radial-gradient(900px 500px at 85% -10%,rgba(240,180,41,.16),transparent 60%),radial-gradient(700px 500px at -10% 30%,rgba(74,168,255,.12),transparent 60%),var(--bg);
+ background-attachment:fixed;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:calc(12px + env(safe-area-inset-top)) 16px 12px;
+ background:rgba(11,15,23,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.logo{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:20px;color:#1a1200;background:linear-gradient(135deg,var(--gold),var(--gold2));box-shadow:0 4px 14px rgba(240,180,41,.35)}
+header h1{flex:1;margin:0;font-size:17px;letter-spacing:.3px;line-height:1.15}
+header h1 small{display:block;font-size:11px;font-weight:500;color:var(--mut);letter-spacing:1.5px;text-transform:uppercase}
+.lang{display:flex;background:rgba(255,255,255,.08);border-radius:999px;padding:3px}
+.lang button{padding:6px 12px;min-height:0;font-size:13px;font-weight:700;border-radius:999px;background:none;border:0;color:var(--mut)}
+.lang button.on{background:var(--gold);color:#1a1200}
+main{padding:14px;max-width:680px;margin:0 auto;animation:in .25s ease}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:14px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+h2{display:flex;align-items:center;gap:8px;font-size:13px;margin:0 0 10px;color:var(--gold);text-transform:uppercase;letter-spacing:1.4px}
+button{font:inherit;color:var(--fg);background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:12px;padding:12px;min-height:46px;cursor:pointer;transition:transform .08s,background .15s}
+button:active{transform:scale(.97)}
+button.on{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1200;font-weight:700;border-color:transparent}
+button:disabled{opacity:.35}
+.row{display:flex;gap:8px}.row>*{flex:1;min-width:0}
+input[data-name]{font:inherit;font-weight:600;background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:12px;padding:12px;width:100%;min-width:0}
+.mut{color:var(--mut);font-size:14px}
+.A{color:var(--a)}.B{color:var(--b)}
+.A.own{background:var(--a);color:#06121f;border-color:transparent;font-weight:700}
+.B.own{background:var(--b);color:#2a0803;border-color:transparent;font-weight:700}
+button.vA{background:var(--a);color:#06121f;border-color:transparent;font-weight:700}
+button.vB{background:var(--b);color:#2a0803;border-color:transparent;font-weight:700}
+button.vAB{display:flex;padding:0;overflow:hidden;border-color:transparent;font-weight:800;color:#0b0f17}
+button.vAB b{flex:1;display:grid;place-items:center;min-height:36px}
+button.vAB b:first-child{background:var(--a)}
+button.vAB b:last-child{background:var(--b)}
+.row.wrap{flex-wrap:wrap}
+.board{width:100%;display:block;border-radius:12px;margin:4px 0 10px}
+.step{display:flex;gap:12px;padding:12px 2px;border-bottom:1px solid var(--line);align-items:flex-start;cursor:pointer}
+.step:last-child{border-bottom:0}
+.step input{appearance:none;-webkit-appearance:none;flex:none;width:26px;height:26px;margin:0;border-radius:8px;border:2px solid var(--mut);display:grid;place-items:center;transition:.15s}
+.step input:checked{background:var(--ok);border-color:var(--ok)}
+.step input:checked::after{content:"✓";color:#04170e;font-weight:900;font-size:16px}
+.step.done span{opacity:.45;text-decoration:line-through}
+.prog{height:8px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin:2px 0 6px}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--gold2),var(--gold));border-radius:99px;transition:width .3s}
+.round{display:flex;gap:8px;margin-bottom:14px}
+.round div{flex:1;text-align:center;padding:10px 0;border-radius:12px;background:var(--card);border:1px solid var(--line);font-weight:700;color:var(--mut)}
+.round div.cur{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1200;border-color:transparent}
+.round div.past{color:var(--ok)}
+.obj{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.beacon{font-size:26px;width:48px;height:48px;display:grid;place-items:center;border-radius:50%;background:rgba(255,255,255,.07);border:2px solid var(--mut);transition:.2s}
+.beacon.A{border-color:var(--a);box-shadow:0 0 18px rgba(74,168,255,.5)}
+.beacon.B{border-color:var(--b);box-shadow:0 0 18px rgba(255,107,91,.5)}
+table{width:100%;border-collapse:collapse}
+td,th{padding:7px 3px;text-align:center;border-bottom:1px solid var(--line);font-size:14px}
+td:first-child,th:first-child{text-align:left}
+td button{padding:4px;min-height:38px;min-width:42px;width:100%}
+.score{display:flex;justify-content:center;align-items:center;gap:16px;font-size:46px;font-weight:800}
+.tp{text-align:center;color:var(--gold);font-weight:700;margin-top:4px}
+.banner{background:linear-gradient(135deg,rgba(62,207,142,.25),rgba(62,207,142,.1));border:1px solid var(--ok);border-radius:14px;padding:12px;margin-bottom:14px}
+#toast{position:fixed;left:16px;right:16px;bottom:calc(92px + env(safe-area-inset-bottom));max-width:640px;margin:0 auto;padding:12px 14px;border-radius:14px;background:#1d3a2e;border:1px solid var(--ok);box-shadow:0 8px 24px rgba(0,0,0,.5);opacity:0;transform:translateY(10px);pointer-events:none;transition:.25s;z-index:10}
+#toast.show{opacity:1;transform:none}
+nav{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));display:flex;background:rgba(18,24,36,.92);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:22px;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.5);max-width:660px;margin:0 auto}
+nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;min-height:0;font-size:11px;background:none;border:0;color:var(--mut);border-radius:16px}
+nav button span{font-size:20px;line-height:1.1}
+nav button.on{background:rgba(240,180,41,.15);color:var(--gold);font-weight:700}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">⚔</div>
+  <h1><span id="ttl"></span><small id="sub"></small></h1>
+  <div class="lang"><button data-lang="de">DE</button><button data-lang="en">EN</button></div>
+</header>
+<main id="app"></main>
+<nav id="nav"></nav>
+<div id="toast"></div>
+<script>
+const KEY = 'epic-guide-v3';
+
+const I18N = {
+  de: {
+    title: 'Epic Armageddon', sub: 'Spielbegleiter',
+    tabs: {warm: ['🔥', 'Warm-up'], setup: ['📐', 'Aufstellung'], turn: ['⏱', 'Runde'], beacon: ['🎯', 'Leuchtfeuer'], score: ['🏆', 'Wertung']},
+    players: 'Spieler', playerA: 'Spieler A', playerB: 'Spieler B',
+    warmTitle: 'Five Minute Warm-up', warmIntro: 'Klärt vor dem Spiel kurz diese Punkte:',
+    warm: [
+      'Die Zählt-als-Regel',
+      'Wie werden Sicht- und Schusslinien ermittelt?',
+      'Wie werden Feuerwinkel von Einheiten gemessen?',
+      'Vormessen - ja oder nein?',
+      'Wann werden Einheiten von Schablonen getroffen?',
+      'Geländemerkmale – wozu zählen sie, wann befinden sich Einheiten im Gelände, wann blockieren sie Sichtlininen?',
+      'Wann zählt eine Einheit als „in Deckung“?',
+      'Wie werden Reichweiten gemessen, von der Base oder der Figur?',
+      'Wie wird ein Verband als aufgerieben oder marschiert markiert?',
+      'Gibt es armeespezifische Sonderregeln?',
+      'Alles andere, was euch einfällt!',
+    ],
+    deployTitle: 'Aufstellung', table: 'Tisch 180 × 120 cm',
+    long: 'Lange Kante', corner: 'Ecke (L)',
+    longDesc: 'Verbände werden bis 15 cm von der eigenen Tischkante aufgestellt.',
+    cornerDesc: 'Verbände werden bis 15 cm von der eigenen Tischkante aufgestellt: L-Form entlang der halben langen und der halben kurzen Kante, ausgehend von der eigenen Ecke.',
+    scenTitle: 'Szenario', scenFire: 'Zündet die Leuchtfeuer', scenTourn: 'Turnierszenario',
+    setupTitle: 'Vorbereitung',
+    setup: [
+      'Armeelisten tauschen & Szenario bestätigen',
+      'Gelände aufbauen',
+      'Aufstellungsart wählen (Lange Kante oder Ecke) und Seiten festlegen',
+      '6 Ziele platzieren: je Spieler 1 Blitz-Ziel (≥ 15 cm von jeder Ecke) und 2 weitere Ziele in der eigenen Tischhälfte (≥ 15 cm von jeder Kante); nie in unpassierbarem Gelände',
+      'Verbände aufstellen (Reihenfolge laut NetEA-Regeln)',
+      'Besprechung vor dem Spiel / Flieger & Reserven',
+    ],
+    setupFire: 'Sechs zweiseitige Marker bereitlegen (Besitz der Ziele)',
+    turnT: [
+      'Initiative: Würfeln, Gewinner entscheidet, wer beginnt',
+      'Abwechselnd Aktionen mit Verbänden ausführen',
+      'Alle Verbände haben gehandelt → Endphase',
+      'Ab Zug 3: Siegesbedingungen prüfen (beide Spieler können sie gleichzeitig erfüllen)',
+      'Sammelversuche',
+      'Zug abschließen',
+    ],
+    newGame: 'Neues Spiel', confirmNew: 'Neues Spiel starten? Alle Daten gehen verloren.',
+    round: 'Runde', starts: 'beginnt', prev: '◀ Zurück', next: 'Nächste Runde ▶', toScore: 'Zur Wertung ▶',
+    turn: [
+      'Initiative: Würfeln, Gewinner entscheidet, wer beginnt',
+      'Abwechselnd Aktionen mit Verbänden ausführen',
+      'Nach JEDER Aktion: Zielbesitz prüfen (nur ungebrochene gegnerische Einheit ≤ 15 cm ⇒ Marker umdrehen)',
+      'Alle Verbände haben gehandelt → Endphase',
+      'Siegesbedingungen prüfen und Punkte eintragen (VOR dem Sammeln!)',
+      'Sammelversuche – gesammelte Einheiten zählen wieder zur Zielkontrolle',
+      'Runde abschließen',
+    ],
+    objTitle: 'Zielmarker', objRule: 'Ein Ziel wechselt den Besitzer, wenn nach einer Aktion nur eine ungebrochene gegnerische Einheit ≤ 15 cm davon steht. Der Besitz bleibt auch nach Abzug.',
+    objNames: ['Blitz-Ziel', 'Ziel 2', 'Ziel 3'], control: 'Kontrolle', turnLbl: 'Zug', vpsMore: 'Armeewert-Differenz > 250 VP (bei Gleichstand)', vpsNone: 'Nein (≤ 250)', t3: 'Sieg in Zug 3', t4: 'Sieg in Zug 4+', result: 'Ergebnis', goals: 'Ziele', draw: 'Unentschieden', winner: 'Sieg', tournHint: 'Antippen: – → A → B → AB (beide gleichzeitig). Aktueller Stand am Zugende; Siegprüfung ab Zug 3.',
+    scoreTitle: 'Siegespunkte', autoFlag: (n, r) => `🏁 „Verteidigt Die Flagge“ automatisch für ${n.join(' & ')} in Runde ${r} gesetzt (alle eigenen Ziele gehalten). Bitte in der Wertung prüfen.`, scoreHint: 'Tippen: – → A → B → AB (beide Spieler gleichzeitig möglich). „Brecht Ihren Willen“ nur einmalig (2 Punkte).',
+    cond: {pass: 'Sie Können Nicht Vorbei', flag: 'Verteidigt Die Flagge', hold: 'Sichern Und Halten', blitz: 'Blitzkrieg', break: 'Brecht Ihren Willen'},
+    early: 'Vorsprung ≥ 8 SP nach Runde 2 – Spiel endet vorzeitig.', tpLabel: 'Turnierpunkte',
+  },
+  en: {
+    title: 'Epic Armageddon', sub: 'Game Companion',
+    tabs: {warm: ['🔥', 'Warm-up'], setup: ['📐', 'Deployment'], turn: ['⏱', 'Round'], beacon: ['🎯', 'Beacons'], score: ['🏆', 'Score']},
+    players: 'Players', playerA: 'Player A', playerB: 'Player B',
+    warmTitle: 'Five Minute Warm-up', warmIntro: 'Agree briefly on these points before the game:',
+    warm: [
+      'The Counts As Rule.',
+      'Lines of Sight and Lines Of Fire.',
+      'Fire Arcs on units.',
+      'Pre-measuring.',
+      'Templates and if units are in or out.',
+      'Terrain features—what do they count as on the terrain chart, when are units in terrain.',
+      'How you will show if a formation is broken, in overwatch or has marched this turn.',
+      'Anything else you can think of!',
+    ],
+    deployTitle: 'Deployment', table: 'Table 180 × 120 cm',
+    long: 'Long Edge', corner: 'Corner (L)',
+    longDesc: 'Formations are set up within 15 cm of their own table edge.',
+    cornerDesc: 'Formations are set up within 15 cm of their own table edge: an L shape along half of the long and half of the short edge, starting at your corner.',
+    scenTitle: 'Scenario', scenFire: 'Fire the Beacons', scenTourn: 'Tournament Scenario',
+    setupTitle: 'Preparation',
+    setup: [
+      'Swap army lists & confirm the scenario',
+      'Set up terrain',
+      'Choose deployment (Long Edge or Corner) and pick sides',
+      'Place 6 objectives: each player has 1 Blitz objective (≥ 15 cm from every corner) and 2 more in their own half (≥ 15 cm from every edge); never in impassable terrain',
+      'Deploy formations (order per NetEA rules)',
+      'Pre-game briefing / aircraft & reserves',
+    ],
+    setupFire: 'Prepare six two-sided markers (objective ownership)',
+    turnT: [
+      'Initiative: roll off, the winner decides who goes first',
+      'Alternate activating formations',
+      'All formations have acted → End phase',
+      'From turn 3: check victory conditions (both players can meet them at once)',
+      'Rally attempts',
+      'Finish the turn',
+    ],
+    newGame: 'New game', confirmNew: 'Start a new game? All data will be lost.',
+    round: 'Round', starts: 'starts', prev: '◀ Back', next: 'Next round ▶', toScore: 'To scoring ▶',
+    turn: [
+      'Initiative: roll off, the winner decides who goes first',
+      'Alternate activating formations',
+      'After EVERY action: check objectives (only an unbroken enemy unit ≤ 15 cm ⇒ flip marker)',
+      'All formations have acted → End phase',
+      'Check victory conditions and record points (BEFORE rallying!)',
+      'Rally attempts – rallied units count for objective control again',
+      'Finish the round',
+    ],
+    objTitle: 'Objective markers', objRule: 'An objective flips owner when, after an action, only an unbroken enemy unit is within 15 cm of it. Ownership stays after units leave.',
+    objNames: ['Blitz objective', 'Objective 2', 'Objective 3'], control: 'Control', turnLbl: 'Turn', vpsMore: 'Army value difference > 250 VP (on a draw)', vpsNone: 'No (≤ 250)', t3: 'Victory on turn 3', t4: 'Victory on turn 4+', result: 'Result', goals: 'Goals', draw: 'Draw', winner: 'Victory', tournHint: 'Tap: – → A → B → AB (both at once). Current state at end of turn; check victory from turn 3.',
+    scoreTitle: 'Victory points', autoFlag: (n, r) => `🏁 “Defend The Flag” set automatically for ${n.join(' & ')} in round ${r} (all own objectives held). Please verify in Score.`, scoreHint: 'Tap: – → A → B → AB (both players can score at once). “Break Their Spirit” only once (2 points).',
+    cond: {pass: 'They Shall Not Pass', flag: 'Defend The Flag', hold: 'Take And Hold', blitz: 'Blitzkrieg', break: 'Break Their Spirit'},
+    early: 'Lead of ≥ 8 VP after round 2 – the game ends early.', tpLabel: 'Tournament points',
+  },
+};
+const COND = [['pass', 1], ['flag', 1], ['hold', 1], ['blitz', 1], ['break', 2]];
+const TP = {0:[16,16],1:[18,14],2:[20,12],3:[22,10],4:[24,8],5:[26,6],6:[28,4],7:[30,2],8:[32,0]};
+const TABS = ['warm', 'setup', 'turn', 'beacon', 'score'];
+
+function fresh() {
+  return {lang: 'de', deploy: 'long', warmDone: [], setupDone: [], round: 1, turnDone: [], first: null,
+    scenario: 'fire', t3: true, vps: '', obj: ['A', 'A', 'A', 'B', 'B', 'B'], names: {A: '', B: ''}, pts: {}};
+}
+function load() {
+  try { return Object.assign(fresh(), JSON.parse(localStorage.getItem(KEY))); } catch (e) { return fresh(); }
+}
+let S = load();
+let tab = 'warm';
+const T = () => I18N[S.lang];
+const short = p => (S.names[p] || '').trim().slice(0, 3) || p;
+const hint = s => s.replace('A → B → AB', short('A') + ' → ' + short('B') + ' → ' + short('A') + '+' + short('B'));
+const nm = p => S.names[p] || T()[p === 'A' ? 'playerA' : 'playerB'];
+function persist() { localStorage.setItem(KEY, JSON.stringify(S)); }
+function save() { persist(); render(); }
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c])); }
+
+function totals(cols) {
+  const t = {A: 0, B: 0}, per = {};
+  const spirit = {A: false, B: false};
+  for (const r of cols) {
+    per[r] = {A: 0, B: 0};
+    for (const [k, p] of COND) {
+      const w = S.pts[r + '-' + k] || '';
+      for (const pl of ['A', 'B']) {
+        if (!w.includes(pl)) continue;
+        let pt = isFire() ? p : 1;
+        if (k === 'break') { if (spirit[pl]) pt = 0; spirit[pl] = true; }
+        per[r][pl] += pt; t[pl] += pt;
+      }
+    }
+  }
+  return {t, per};
+}
+function isFire() { return S.scenario === 'fire'; }
+
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 4500);
+}
+
+// Defend The Flag: a player owning all three of their own objectives scores it for this round
+function applyBeaconScoring(round) {
+  const done = [];
+  [['A', 0], ['B', 3]].forEach(([p, off]) => {
+    if (!S.obj.slice(off, off + 3).every(o => o === p)) return;
+    const key = round + '-flag', cur = S.pts[key] || '';
+    if (cur.includes(p)) return;
+    S.pts[key] = ['A', 'B'].filter(x => cur.includes(x) || x === p).join('');
+    done.push(nm(p));
+  });
+  if (done.length) toast(T().autoFlag(done, round));
+}
+
+function checklist(list, key) {
+  const done = S[key].length, pct = Math.round(done / list.length * 100);
+  return `<div class="prog"><i style="width:${pct}%"></i></div><div class="mut" style="margin-bottom:4px">${done} / ${list.length}</div>` +
+    list.map((s, i) => {
+      const on = S[key].includes(i);
+      return `<label class="step ${on ? 'done' : ''}"><input type="checkbox" data-step="${key}:${i}" ${on ? 'checked' : ''}><span>${esc(s)}</span></label>`;
+    }).join('');
+}
+
+function boardSvg() {
+  const a = '#4aa8ff', b = '#ff6b5b';
+  let zones;
+  if (S.deploy === 'long') {
+    zones = `<rect x="0" y="0" width="180" height="15" fill="${a}" fill-opacity=".4"/>
+      <rect x="0" y="105" width="180" height="15" fill="${b}" fill-opacity=".4"/>
+      <line x1="0" y1="15" x2="180" y2="15" stroke="${a}" stroke-dasharray="3 2" stroke-width=".7"/>
+      <line x1="0" y1="105" x2="180" y2="105" stroke="${b}" stroke-dasharray="3 2" stroke-width=".7"/>
+      <text x="90" y="10" class="zt">${esc(nm('A'))} · 15 cm</text>
+      <text x="90" y="114" class="zt">${esc(nm('B'))} · 15 cm</text>`;
+  } else {
+    zones = `<polygon points="0,0 90,0 90,15 15,15 15,60 0,60" fill="${a}" fill-opacity=".5" stroke="${a}" stroke-width=".7"/>
+      <polygon points="180,120 90,120 90,105 165,105 165,60 180,60" fill="${b}" fill-opacity=".5" stroke="${b}" stroke-width=".7"/>
+      <text x="52" y="32" class="zt">${esc(nm('A'))}</text>
+      <text x="128" y="94" class="zt">${esc(nm('B'))}</text>
+      <text x="100" y="26" class="dim">90 cm</text>
+      <text x="30" y="68" class="dim">60 cm</text>`;
+  }
+  return `<svg class="board" viewBox="-8 -8 196 136" xmlns="http://www.w3.org/2000/svg">
+    <style>.zt{font:600 6px system-ui;fill:#fff;text-anchor:middle}.dim{font:5px system-ui;fill:#cfe;text-anchor:middle}</style>
+    <defs><pattern id="g" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M10 0H0V10" fill="none" stroke="#fff" stroke-opacity=".06" stroke-width=".4"/></pattern>
+    <linearGradient id="t" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#27402c"/><stop offset="1" stop-color="#1a2b1f"/></linearGradient></defs>
+    <rect x="0" y="0" width="180" height="120" fill="url(#t)" rx="2"/><rect x="0" y="0" width="180" height="120" fill="url(#g)"/>
+    ${zones}
+    <rect x="0" y="0" width="180" height="120" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="1" rx="2"/>
+    <text x="90" y="-2.5" class="dim">180 cm</text>
+    <text x="-3" y="60" class="dim" transform="rotate(-90 -3 60)">120 cm</text>
+  </svg>`;
+}
+
+function viewWarm() {
+  const t = T();
+  return `<div class="card"><h2>🔥 ${t.warmTitle}</h2><div class="mut">${t.warmIntro}</div>${checklist(t.warm, 'warmDone')}</div>`;
+}
+
+function setupList() {
+  const t = T(), l = t.setup.slice();
+  if (isFire()) l.splice(4, 0, t.setupFire);
+  return l;
+}
+
+function viewSetup() {
+  const t = T();
+  return `<div class="card"><h2>📜 ${t.scenTitle}</h2><div class="row">${['fire', 'tourn'].map(k =>
+      `<button data-scen="${k}" class="${S.scenario === k ? 'on' : ''}">${k === 'fire' ? t.scenFire : t.scenTourn}</button>`).join('')}</div></div>
+    <div class="card"><h2>👥 ${t.players}</h2><div class="row">
+      <input data-name="A" value="${esc(S.names.A)}" placeholder="${t.playerA}" style="color:var(--a)">
+      <input data-name="B" value="${esc(S.names.B)}" placeholder="${t.playerB}" style="color:var(--b)"></div></div>
+    <div class="card"><h2>📐 ${t.deployTitle}</h2>
+      <div class="row" style="margin-bottom:10px">${['long', 'corner'].map(k => `<button data-dep="${k}" class="${S.deploy === k ? 'on' : ''}">${t[k]}</button>`).join('')}</div>
+      ${boardSvg()}
+      <div class="mut">${t.table}<br>${S.deploy === 'long' ? t.longDesc : t.cornerDesc}</div></div>
+    <div class="card"><h2>📋 ${t.setupTitle}</h2>${checklist(setupList(), 'setupDone')}</div>
+    <button data-reset style="width:100%">${t.newGame}</button>`;
+}
+
+function viewTurn() {
+  const t = T(), max = isFire() ? 3 : Math.max(4, S.round);
+  const rounds = Array.from({length: max}, (_, i) => i + 1);
+  const lbl = isFire() ? t.round : t.turnLbl;
+  return `<div class="round">${rounds.map(r => `<div class="${r === S.round ? 'cur' : r < S.round ? 'past' : ''}">${lbl} ${r}</div>`).join('')}</div>
+    <div class="card"><h2>🎲 ${lbl} ${S.round}</h2>
+      <div class="row">${['A', 'B'].map(p => `<button data-first="${p}" class="${S.first === p ? 'on' : ''}">${esc(nm(p))} ${t.starts}</button>`).join('')}</div></div>
+    <div class="card">${checklist(isFire() ? t.turn : t.turnT, 'turnDone')}</div>
+    <div class="row"><button data-prev ${S.round === 1 ? 'disabled' : ''}>${t.prev}</button>
+      <button data-next class="on">${isFire() && S.round === 3 ? t.toScore : t.next}</button></div>`;
+}
+
+function viewBeacon() {
+  const t = T();
+  const cA = S.obj.filter(o => o === 'A').length;
+  const card = i => {
+    const o = S.obj[i], owner = i < 3 ? 'A' : 'B';
+    return `<div class="card"><div class="obj"><div class="beacon ${o}">🎯</div>
+      <div><h2 style="margin:0">${t.objNames[i % 3]}</h2><div class="mut ${owner}">${esc(nm(owner))}</div></div></div>
+      <div class="row">${['A', 'B'].map(p => `<button data-obj="${i}:${p}" class="${p} ${o === p ? 'own' : ''}">${esc(nm(p))}</button>`).join('')}</div></div>`;
+  };
+  return `<div class="card"><h2>🎯 ${t.objTitle}</h2><div class="mut">${t.objRule}</div></div>
+    ${[0, 1, 2, 3, 4, 5].map(card).join('')}
+    <div class="card"><div class="score" style="font-size:34px"><span class="A">${cA}</span><span class="mut">:</span><span class="B">${6 - cA}</span></div>
+      <div class="mut" style="text-align:center">${t.control}</div></div>`;
+}
+
+const TOURN_TP = {4: [32, 30], 3: [30, 28], 2: [28, 26], 1: [26, 24]};
+
+function condRows(cols) {
+  const t = T();
+  return COND.map(([k, p]) => `<tr><td>${t.cond[k]}${isFire() && p > 1 ? ' <b class="mut">×2</b>' : ''}</td>${cols.map(r => {
+    const v = S.pts[r + '-' + k] || '';
+    return `<td><button data-pt="${r}-${k}" class="${v ? 'v' + v : ''}">${v === 'AB' ? `<b>${esc(short('A'))}</b><b>${esc(short('B'))}</b>` : v ? esc(short(v)) : '–'}</button></td>`;
+  }).join('')}</tr>`).join('');
+}
+
+function viewScore() {
+  return isFire() ? viewScoreFire() : viewScoreTourn();
+}
+
+function viewScoreTourn() {
+  const t = T(), {t: tot} = totals(['T']);
+  const diff = Math.abs(tot.A - tot.B);
+  const lead = tot.A > tot.B ? 'A' : 'B';
+  let res, tpTxt;
+  if (diff > 0) {
+    const tp = TOURN_TP[Math.min(diff, 4)];
+    const w = S.t3 ? tp[0] : tp[1];
+    res = `${t.winner}: ${esc(nm(lead))}`; tpTxt = `${w} – ${32 - w}`;
+  } else if (S.vps) {
+    res = t.draw; tpTxt = S.vps === 'A' ? '18 – 14' : '14 – 18';
+  } else { res = t.draw; tpTxt = '16 – 16'; }
+  const draw = diff === 0;
+  return `<div class="card"><h2>🏆 ${t.scoreTitle}</h2><div class="mut" style="margin-bottom:6px">${hint(t.tournHint)}</div>
+      <table><tr><th></th><th>${t.goals}</th></tr>${condRows(['T'])}</table></div>
+    <div class="card"><h2>⏱ ${t.turnLbl}</h2><div class="row">
+      <button data-t3="1" class="${S.t3 ? 'on' : ''}">${t.t3}</button><button data-t3="0" class="${!S.t3 ? 'on' : ''}">${t.t4}</button></div></div>
+    ${draw ? `<div class="card"><h2>⚖ ${t.vpsMore}</h2><div class="row">
+      <button data-vps="" class="${!S.vps ? 'on' : ''}">${t.vpsNone}</button>
+      <button data-vps="A" class="A ${S.vps === 'A' ? 'own' : ''}">${esc(nm('A'))}</button>
+      <button data-vps="B" class="B ${S.vps === 'B' ? 'own' : ''}">${esc(nm('B'))}</button></div></div>` : ''}
+    <div class="card"><div class="score"><span class="A">${tot.A}</span><span class="mut">:</span><span class="B">${tot.B}</span></div>
+      <div class="tp">${res}</div><div class="tp">${t.tpLabel} ${tpTxt}</div></div>`;
+}
+
+function viewScoreFire() {
+  const cols = [1, 2, 3], t = T(), {t: tot, per} = totals(cols);
+  const diff = Math.abs(tot.A - tot.B), tp = TP[Math.min(diff, 8)];
+  const [ta, tb] = tot.A >= tot.B ? tp : [tp[1], tp[0]];
+  const lead2 = Math.abs(per[1].A + per[2].A - per[1].B - per[2].B);
+  return `${lead2 >= 8 ? `<div class="banner">🏁 ${t.early}</div>` : ''}
+    <div class="card"><h2>🏆 ${t.scoreTitle}</h2><div class="mut" style="margin-bottom:6px">${hint(t.scoreHint)}</div>
+      <table><tr><th></th>${cols.map(r => `<th>R${r}</th>`).join('')}</tr>${condRows(cols)}
+      <tr><th class="A">${esc(nm('A'))}</th>${cols.map(r => `<th class="A">${per[r].A}</th>`).join('')}</tr>
+      <tr><th class="B">${esc(nm('B'))}</th>${cols.map(r => `<th class="B">${per[r].B}</th>`).join('')}</tr></table></div>
+    <div class="card"><div class="score"><span class="A">${tot.A}</span><span class="mut">:</span><span class="B">${tot.B}</span></div>
+      <div class="tp">${t.tpLabel} ${ta} – ${tb}</div></div>`;
+}
+
+function render() {
+  const t = T();
+  document.documentElement.lang = S.lang;
+  document.getElementById('ttl').textContent = t.title;
+  document.getElementById('sub').textContent = t.sub;
+  document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('on', b.dataset.lang === S.lang));
+  const tabs = TABS.filter(k => isFire() || k !== 'beacon');
+  if (!tabs.includes(tab)) tab = 'setup';
+  document.getElementById('nav').innerHTML = tabs.map(k =>
+    `<button data-t="${k}" class="${k === tab ? 'on' : ''}"><span>${t.tabs[k][0]}</span>${t.tabs[k][1]}</button>`).join('');
+  document.getElementById('app').innerHTML = {warm: viewWarm, setup: viewSetup, turn: viewTurn, beacon: viewBeacon, score: viewScore}[tab]();
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const d = b.dataset;
+  if (d.t) { tab = d.t; render(); return scrollTo(0, 0); }
+  if (d.lang) S.lang = d.lang;
+  else if (d.scen) { if (S.scenario === d.scen) return; S.scenario = d.scen; S.setupDone = []; S.turnDone = []; S.round = 1; }
+  else if (d.dep) S.deploy = d.dep;
+  else if (d.first) S.first = d.first;
+  else if (d.obj) { const [i, p] = d.obj.split(':'); S.obj[i] = p; }
+  else if (d.pt) { const c = S.pts[d.pt] || ''; S.pts[d.pt] = {'': 'A', A: 'B', B: 'AB', AB: ''}[c]; }
+  else if (d.t3 !== undefined) S.t3 = d.t3 === '1';
+  else if (d.vps !== undefined) S.vps = d.vps;
+  else if (d.next !== undefined) {
+    if (isFire()) applyBeaconScoring(S.round);
+    if (S.round < (isFire() ? 3 : 10)) { S.round++; S.turnDone = []; S.first = null; } else { tab = 'score'; }
+  }
+  else if (d.prev !== undefined) { if (S.round > 1) { S.round--; S.turnDone = []; } }
+  else if (d.reset !== undefined) { if (!confirm(T().confirmNew)) return; const l = S.lang; S = fresh(); S.lang = l; }
+  else return;
+  save();
+});
+document.addEventListener('change', e => {
+  const c = e.target.dataset;
+  if (c.step) {
+    const [k, i] = c.step.split(':'), n = +i;
+    S[k] = S[k].includes(n) ? S[k].filter(x => x !== n) : [...S[k], n];
+    save();
+  }
+});
+document.addEventListener('input', e => {
+  if (e.target.dataset.name) {
+    const el = e.target, n = el.dataset.name, pos = el.selectionStart;
+    S.names[n] = el.value; persist(); render();
+    const nx = document.querySelector(`input[data-name="${n}"]`);
+    nx.focus(); nx.setSelectionRange(pos, pos);
+  }
+});
+render();
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js');
+</script>
+</body>
+</html>
