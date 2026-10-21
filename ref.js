@@ -129,7 +129,7 @@ const REF = {
       [D('Eilschritt', 'Double'), D('2× bewegen, dann schießen (−1)', 'Move twice, then shoot (−1)')],
       [D('Marsch', 'March'), D('3× bewegen', 'Move three times')],
       [D('Ordnen', 'Marshal'), D('Schießen (−1) ODER 1× bewegen, dann sammeln', 'Shoot (−1) OR move once, then rally')],
-      [D('Feuerbereitschaft', 'Overwatch'), D('Nicht möglich, wenn Feind ≤ 15 cm oder Einheit außerhalb des Verbands. Schuss nach Feindbewegung/Ausladen.', 'Not possible if an enemy is within 15 cm or a unit is out of formation. Shoot after an enemy move/unload.')],
+      [D('Feuerbereitschaft', 'Overwatch'), D('Nicht möglich, wenn Einheit außerhalb der Kohärenz des Verbandes ist. Schuss nach Feindbewegung/Ausladen.', 'Not possible if a unit is out of formation. Shoot after an enemy move/unload.')],
       [D('Dauerfeuer', 'Sustained fire'), D('Nicht bewegen, schießen mit +1', 'No move, shoot at +1')],
       [D('Halten', 'Hold'), D('Fehlgeschlagene Aktivierung: 1× bewegen, schießen oder sammeln', 'Failed activation: move once, shoot or rally')],
     ]}},
