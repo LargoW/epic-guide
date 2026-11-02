@@ -87,6 +87,27 @@ button{overflow-wrap:anywhere;line-height:1.2}
 .laygrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:8px;margin-bottom:10px}
 .laygrid button{font-size:14px;padding:10px 8px;display:flex;align-items:center;justify-content:center;text-align:center}
 .row.wrap{flex-wrap:wrap}.row.wrap>*{flex:1 1 130px}
+#splash{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;background:var(--bg);animation:in .4s ease}
+#splash>*{max-width:420px;width:100%}
+#splash h1{margin:0;font-size:26px}
+#splash .card{text-align:left;margin:8px 0}
+#splash a,.footlinks a{color:var(--gold);font-size:14px}
+.logo.big{width:72px;height:72px;font-size:38px;border-radius:20px;margin:0 auto}
+.footlinks{display:flex;justify-content:center;gap:18px;margin:14px 0 0}
+.footlinks button{background:none;border:0;color:var(--gold);font-size:14px;min-height:0;padding:0;text-decoration:underline}
+.btnlink{display:block;text-align:center;margin-top:10px;padding:12px;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1200;font-weight:700;text-decoration:none}
+select,input[data-tf]{font:inherit;font-weight:600;color:var(--fg);background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:12px;padding:12px;width:100%;min-width:0}
+select option{color:#000}
+.prow{display:flex;flex-direction:column;gap:6px;padding:10px 0;border-bottom:1px solid var(--line)}.prow.off{opacity:.55}
+.mhead{display:flex;justify-content:space-between;gap:8px;margin-bottom:6px}.warn{color:var(--gold);font-size:13px}
+.mpl{display:flex;align-items:center;gap:8px;font-weight:700;margin-bottom:10px}.mpl>div{flex:1;min-width:0;overflow-wrap:anywhere}.mpl>div:last-child{text-align:right}.mpl small{display:block;font-weight:400;color:var(--mut)}
+.srow{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.stp{display:flex;align-items:center;gap:10px}.stp b{min-width:34px;text-align:center;font-size:30px}.stp button{min-width:46px;padding:8px}
+.setrow{display:flex;align-items:center;justify-content:space-between;margin:8px 0}
+.stand td small{display:block;color:var(--mut);font-size:12px}.stand tr.off{opacity:.5}
+tr.me{background:rgba(240,180,41,.18)}
+.pairbtn{display:grid;grid-template-columns:auto 1fr auto 1fr;align-items:center;gap:8px;width:100%;margin-bottom:6px;text-align:left}.pairbtn b:last-child{text-align:right}
+.bigtable{text-align:center;font-size:40px;font-weight:800;color:var(--gold)}
 </style>
 </head>
 <body>
@@ -108,17 +129,17 @@ const I18N = {
     title: 'Epic Armageddon', sub: 'Spielbegleiter',
     tabs: {warm: ['🔥', 'Warm-up'], setup: ['📐', 'Aufstellung'], turn: ['⏱', 'Runde'], beacon: ['🎯', 'Leuchtfeuer'], score: ['🏆', 'Wertung']},
     players: 'Spieler', playerA: 'Spieler A', playerB: 'Spieler B',
-    warmTitle: 'Five Minute Warm-up', warmIntro: 'Klärt vor dem Spiel kurz diese Punkte:',
+    warmTitle: 'Fünf-Minuten-Warm-up', warmIntro: 'Klärt vor dem Spiel kurz diese Punkte:',
     warm: [
       'Die Zählt-als-Regel',
       'Wie werden Sicht- und Schusslinien ermittelt?',
       'Wie werden Feuerwinkel von Einheiten gemessen?',
       'Vormessen - ja oder nein?',
       'Wann werden Einheiten von Schablonen getroffen?',
-      'Geländemerkmale – wozu zählen sie, wann befinden sich Einheiten im Gelände, wann blockieren sie Sichtlininen?',
+      'Geländemerkmale – wozu zählen sie, wann befinden sich Einheiten im Gelände, wann blockieren sie Sichtlinien?',
       'Wann zählt eine Einheit als „in Deckung“?',
       'Wie werden Reichweiten gemessen, von der Base oder der Figur?',
-      'Wie wird ein Verband als aufgerieben oder marschiert markiert?',
+      'Wie wird ein Verband als aufgerieben, in Feuerbereitschaft oder in diesem Zug marschiert markiert?',
       'Gibt es armeespezifische Sonderregeln?',
       'Alles andere, was euch einfällt!',
     ],
@@ -145,8 +166,8 @@ const I18N = {
       'Sammelversuche',
       'Zug abschließen',
     ],
-    newGame: 'Neues Spiel', confirmNew: 'Neues Spiel starten? Alle Daten gehen verloren.',
-    round: 'Runde', starts: 'beginnt', prev: '◀ Zurück', next: 'Nächste Runde ▶', toScore: 'Zur Wertung ▶',
+    newGame: 'Neues Spiel', gameSettings: 'Spieleinstellungen', skipWarm: 'Warm-up überspringen', skipWarmHint: 'Blendet den Tab „Warm-up“ aus, z. B. wenn das Turnier die Punkte bereits vorgibt.', confirmNew: 'Neues Spiel starten? Alle Daten gehen verloren.',
+    round: 'Runde', starts: 'beginnt', prev: '◀ Zurück', next: 'Nächste Runde ▶', nextT: 'Nächster Zug ▶', toScore: 'Zur Wertung ▶',
     turn: [
       'Initiative: Würfeln, Gewinner entscheidet, wer beginnt',
       'Abwechselnd Aktionen mit Verbänden ausführen',
@@ -174,7 +195,9 @@ const I18N = {
       'Pre-measuring.',
       'Templates and if units are in or out.',
       'Terrain features—what do they count as on the terrain chart, when are units in terrain.',
-      'How you will show if a formation is broken, in overwatch or has marched this turn.',
+      'When is a unit in Cover?',
+      'How are ranges measured, from base or miniature?',
+      'How you will show if a formation is Broken, on Overwatch or has Marched this turn.',
       'Anything else you can think of!',
     ],
     deployTitle: 'Deployment', table: 'Table 180 × 120 cm',
@@ -200,8 +223,8 @@ const I18N = {
       'Rally attempts',
       'Finish the turn',
     ],
-    newGame: 'New game', confirmNew: 'Start a new game? All data will be lost.',
-    round: 'Round', starts: 'starts', prev: '◀ Back', next: 'Next round ▶', toScore: 'To scoring ▶',
+    newGame: 'New game', gameSettings: 'Game settings', skipWarm: 'Skip the warm-up', skipWarmHint: 'Hides the Warm-up tab, e.g. when a tournament ruling already covers these points.', confirmNew: 'Start a new game? All data will be lost.',
+    round: 'Round', starts: 'starts', prev: '◀ Back', next: 'Next round ▶', nextT: 'Next turn ▶', toScore: 'To scoring ▶',
     turn: [
       'Initiative: roll off, the winner decides who goes first',
       'Alternate activating formations',
@@ -222,12 +245,88 @@ const COND = [['pass', 1], ['flag', 1], ['hold', 1], ['blitz', 1], ['break', 2]]
 const TP = {0:[16,16],1:[18,14],2:[20,12],3:[22,10],4:[24,8],5:[26,6],6:[28,4],7:[30,2],8:[32,0]};
 const TABS = ['warm', 'setup', 'turn', 'beacon', 'score'];
 
+// Separate localStorage keys per concern. Reserved for future features:
+//   HISTORY_KEY: array of finished games (to be archived on "new game")
+//   TOURN_KEY:   tournament organiser data
+const PREFS_KEY = 'epic-guide-prefs-v1';
+const HISTORY_KEY = 'epic-guide-history-v1';
+const TOURN_KEY = 'epic-guide-tournaments-v1';
+
+function readJSON(key) {
+  try { return JSON.parse(localStorage.getItem(key)); } catch (e) { return null; }
+}
+function loadPrefs() {
+  const p = readJSON(PREFS_KEY) || {};
+  const n = p.names || {};
+  return {
+    lang: p.lang === 'de' ? 'de' : 'en',
+    scenario: p.scenario === 'tourn' ? 'tourn' : 'fire',
+    names: {A: String(n.A || ''), B: String(n.B || '')},
+    skipWarm: p.skipWarm === true,
+    seen: String(p.seen || ''),
+  };
+}
+let seenVersion = loadPrefs().seen;
+function savePrefs() {
+  // A game started from a tournament pairing must not overwrite the user's own name/mission preferences
+  const keep = S.tournGame ? loadPrefs() : S;
+  try { localStorage.setItem(PREFS_KEY, JSON.stringify({lang: S.lang, scenario: keep.scenario, names: keep.names, skipWarm: S.skipWarm, seen: seenVersion})); } catch (e) {}
+}
+
+const VERSION = '1.2';
+const REPO = 'https://github.com/LargoW/epic-guide';
+const CHANGELOG = [
+  {v: '1.2', date: '2026-11-02',
+    short: {de: 'Neu: Turniermodus mit Schweizer System, Tischzuteilung, Rangliste und Teilen per QR-Code.', en: 'New: Tournament mode with Swiss pairings, table assignment, standings and QR sharing.'},
+    de: ['Turniermodus: Schweizer System ohne Wiederholungen von Gegnern und Tischen', 'Rangliste nach Turnierpunkten, Zieldifferenz und direktem Vergleich', 'Teilen per QR-Code/Link: Spieler sehen Rang, Gegner, Tisch und Armee', 'Armeename und Armeelisten-Link (z. B. Army Forge) pro Spieler', 'Bemalwettbewerb per Stimmzettel (oder Sieger direkt eintragen)', 'Archivierte Turniere können wiederhergestellt werden', 'Paarung antippen, um das Spiel zu starten; Warm-up überspringbar'],
+    en: ['Tournament mode: Swiss pairing without repeated opponents or tables', 'Standings by tournament points, goal difference and head-to-head', 'Share via QR code/link: players see rank, opponent, table and army', 'Army name and army list link (e.g. Army Forge) per player', 'Painting competition by ballot (or just enter the winner)', 'Archived tournaments can be restored', 'Tap a pairing to start that game; option to skip the warm-up']},
+  {v: '1.1', date: '2026-11-02',
+    short: {de: 'Einstellungen werden gespeichert.', en: 'Your preferences are now saved.'},
+    de: ['Sprache, Szenario und Spielernamen werden lokal gespeichert', 'Standardsprache ist Englisch', 'Startbildschirm mit Neuigkeiten und vollständigem Changelog', 'Link zum GitHub-Repository für Feature-Wünsche und Fehlerberichte'],
+    en: ['Language, scenario and player names are saved locally', 'Default language is English', 'Splash screen with news and full changelog', 'Link to the GitHub repository for feature requests and bug reports']},
+];
+const SPLASH = {
+  de: {news: 'Neu', go: 'Los geht’s', fb: 'Feedback & Fehler melden', info: 'Neuigkeiten', all: 'Kompletter Changelog', back: 'Zurück', log: 'Changelog'},
+  en: {news: 'What’s new', go: 'Let’s go', fb: 'Feature requests & bug reports', info: 'What’s new', all: 'Full changelog', back: 'Back', log: 'Changelog'},
+};
+function splashHtml() {
+  const s = SPLASH[S.lang], t = T();
+  return `<div class="logo big">⚔</div><h1>${t.title}</h1><div class="mut">${t.sub} · v${VERSION}</div>
+    <div class="card"><h2>✨ ${s.news}</h2><div>${CHANGELOG[0].short[S.lang]}</div></div>
+    <button class="on" data-splash-close>${s.go}</button>
+    <button data-changelog>${s.all}</button>
+    <a href="${REPO}/issues" target="_blank" rel="noopener">${s.fb} ↗</a>`;
+}
+function changelogHtml() {
+  const s = SPLASH[S.lang];
+  return `<h1>📜 ${s.log}</h1><div style="overflow:auto;max-height:65vh;text-align:left">${CHANGELOG.map(c =>
+    `<div class="card"><h2>v${c.v} · ${c.date}</h2><ul class="rl">${c[S.lang].map(x => `<li>${x}</li>`).join('')}</ul></div>`).join('')}</div>
+    <button class="on" data-splash-close>${s.back}</button>
+    <a href="${REPO}/issues" target="_blank" rel="noopener">${s.fb} ↗</a>`;
+}
+function showSplash(html) {
+  let el = document.getElementById('splash');
+  if (!el) { el = document.createElement('div'); el.id = 'splash'; document.body.appendChild(el); }
+  el.innerHTML = html || splashHtml();
+}
+function closeSplash() {
+  const el = document.getElementById('splash'); if (el) el.remove();
+  seenVersion = VERSION; savePrefs();
+}
+
 function fresh() {
-  return {lang: 'de', deploy: 'long', warmDone: [], setupDone: [], round: 1, turnDone: [], first: null,
-    scenario: 'fire', t3: true, vps: '', obj: ['A', 'A', 'A', 'B', 'B', 'B'], names: {A: '', B: ''}, pts: {}};
+  const p = loadPrefs();
+  return {lang: p.lang, deploy: 'long', warmDone: [], setupDone: [], round: 1, turnDone: [], first: null,
+    scenario: p.scenario, skipWarm: p.skipWarm, tournGame: false, t3: true, vps: '', obj: ['A', 'A', 'A', 'B', 'B', 'B'], names: p.names, pts: {}};
 }
 function load() {
-  try { return Object.assign(fresh(), JSON.parse(localStorage.getItem(KEY))); } catch (e) { return fresh(); }
+  // Preferences take precedence over values stored in an older game state
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY)) || {};
+    const s = Object.assign(fresh(), saved, loadPrefs());
+    if (saved.tournGame) { s.names = saved.names; s.scenario = saved.scenario; s.tournGame = true; }
+    return s;
+  } catch (e) { return fresh(); }
 }
 let S = load();
 let tab = 'warm', prevTab = 'warm';
@@ -235,7 +334,7 @@ const T = () => I18N[S.lang];
 const short = p => (S.names[p] || '').trim().slice(0, 3) || p;
 const hint = s => s.replace('A → B → AB', short('A') + ' → ' + short('B') + ' → ' + short('A') + '+' + short('B'));
 const nm = p => S.names[p] || T()[p === 'A' ? 'playerA' : 'playerB'];
-function persist() { localStorage.setItem(KEY, JSON.stringify(S)); }
+function persist() { localStorage.setItem(KEY, JSON.stringify(S)); savePrefs(); }
 function save() { persist(); render(); }
 function esc(s) { return String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c])); }
 
@@ -340,7 +439,9 @@ function viewSetup() {
       ${boardSvg()}
       <div class="mut">${t.table}<br>${S.deploy === 'long' ? t.longDesc : t.cornerDesc}</div></div>
     <div class="card"><h2>📋 ${t.setupTitle}</h2>${checklist(setupList(), 'setupDone')}</div>
-    <button data-reset style="width:100%">${t.newGame}</button>`;
+    <div class="card"><h2>⚙ ${t.gameSettings}</h2><button data-skipwarm class="${S.skipWarm ? 'on' : ''}" style="width:100%">${S.skipWarm ? '✔ ' : ''}${t.skipWarm}</button><div class="mut" style="margin-top:6px">${t.skipWarmHint}</div></div>
+    <button data-reset style="width:100%">${t.newGame}</button>
+    <div class="footlinks"><button data-splash>${SPLASH[S.lang].info}</button><button data-changelog>${SPLASH[S.lang].log}</button><a href="${REPO}/issues" target="_blank" rel="noopener">${SPLASH[S.lang].fb} ↗</a></div>`;
 }
 
 function viewTurn() {
@@ -352,7 +453,7 @@ function viewTurn() {
       <div class="row">${['A', 'B'].map(p => `<button data-first="${p}" class="${S.first === p ? 'on' : ''}">${esc(nm(p))} ${t.starts}</button>`).join('')}</div></div>
     <div class="card">${checklist(isFire() ? t.turn : t.turnT, 'turnDone')}</div>
     <div class="row"><button data-prev ${S.round === 1 ? 'disabled' : ''}>${t.prev}</button>
-      <button data-next class="on">${isFire() && S.round === 3 ? t.toScore : t.next}</button></div>`;
+      <button data-next class="on">${isFire() && S.round === 3 ? t.toScore : isFire() ? t.next : t.nextT}</button></div>`;
 }
 
 function viewBeacon() {
@@ -429,24 +530,31 @@ function render() {
   document.getElementById('ttl').textContent = t.title;
   document.getElementById('sub').textContent = t.sub;
   document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('on', b.dataset.lang === S.lang));
-  const tabs = TABS.filter(k => isFire() || k !== 'beacon');
-  if (tab !== 'ref' && !tabs.includes(tab)) tab = 'setup';
-  const inRef = tab === 'ref';
+  const tabs = TABS.filter(k => (isFire() || k !== 'beacon') && (!S.skipWarm || k !== 'warm'));
+  if (tab !== 'ref' && tab !== 'tourn' && !tabs.includes(tab)) tab = 'setup';
+  const inRef = tab === 'ref', inT = tab === 'tourn', de = S.lang === 'de';
   document.getElementById('mode').innerHTML =
-    `<button data-mode="game" class="${inRef ? '' : 'on'}">🎮 ${S.lang === 'de' ? 'Spiel' : 'Game'}</button>` +
-    `<button data-mode="ref" class="${inRef ? 'on' : ''}">📖 ${S.lang === 'de' ? 'Referenz' : 'Reference'}</button>`;
-  document.getElementById('nav').innerHTML = tabs.map(k =>
+    `<button data-mode="game" class="${inRef || inT ? '' : 'on'}">🎮 ${de ? 'Spiel' : 'Game'}</button>` +
+    `<button data-mode="tourn" class="${inT ? 'on' : ''}">🏆 ${de ? 'Turnier' : 'Tournament'}</button>` +
+    `<button data-mode="ref" class="${inRef ? 'on' : ''}">📖 ${de ? 'Referenz' : 'Reference'}</button>`;
+  document.getElementById('nav').innerHTML = inT ? tournNav() : tabs.map(k =>
     `<button data-t="${k}" class="${k === tab ? 'on' : ''}"><span>${t.tabs[k][0]}</span>${t.tabs[k][1]}</button>`).join('');
-  document.getElementById('app').innerHTML = {warm: viewWarm, setup: viewSetup, turn: viewTurn, beacon: viewBeacon, score: viewScore, ref: viewRef}[tab]();
+  document.getElementById('app').innerHTML = {warm: viewWarm, setup: viewSetup, turn: viewTurn, beacon: viewBeacon, score: viewScore, ref: viewRef, tourn: () => tournView()}[tab]();
+  if (inT) tournAfter();
 }
 
 document.addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   const d = b.dataset;
+  if (d.splashClose !== undefined) return closeSplash();
+  if (d.splash !== undefined) return showSplash();
+  if (d.changelog !== undefined) return showSplash(changelogHtml());
+  if (d.skipwarm !== undefined) { S.skipWarm = !S.skipWarm; if (S.skipWarm && tab === 'warm') tab = 'setup'; return save(); }
+  if (typeof tournClick === 'function' && tournClick(b)) return;
   if (d.t) { tab = d.t; render(); return scrollTo(0, 0); }
   if (d.mode) {
-    if (d.mode === 'ref' && tab !== 'ref') { prevTab = tab; tab = 'ref'; }
-    else if (d.mode === 'game' && tab === 'ref') tab = prevTab;
+    if (d.mode !== 'game' && tab !== d.mode) { if (tab !== 'ref' && tab !== 'tourn') prevTab = tab; tab = d.mode; }
+    else if (d.mode === 'game' && (tab === 'ref' || tab === 'tourn')) tab = prevTab;
     render(); return scrollTo(0, 0);
   }
   if (d.refclose !== undefined) { tab = prevTab; render(); return scrollTo(0, 0); }
@@ -467,7 +575,7 @@ document.addEventListener('click', e => {
     if (S.round < (isFire() ? 3 : 10)) { S.round++; S.turnDone = []; S.first = null; } else { tab = 'score'; }
   }
   else if (d.prev !== undefined) { if (S.round > 1) { S.round--; S.turnDone = []; } }
-  else if (d.reset !== undefined) { if (!confirm(T().confirmNew)) return; const l = S.lang; S = fresh(); S.lang = l; }
+  else if (d.reset !== undefined) { if (!confirm(T().confirmNew)) return; S = fresh(); }
   else return;
   save();
 });
@@ -480,6 +588,7 @@ document.addEventListener('change', e => {
   }
 });
 document.addEventListener('input', e => {
+  if (typeof tournInput === 'function' && tournInput(e)) return;
   if (e.target.dataset.name) {
     const el = e.target, n = el.dataset.name, pos = el.selectionStart;
     S.names[n] = el.value; persist(); render();
@@ -488,7 +597,10 @@ document.addEventListener('input', e => {
   }
 });
 render();
+if (seenVersion !== VERSION) showSplash();
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js');
 </script>
+<script src="qr.js"></script>
+<script src="tournament.js"></script>
 </body>
 </html>
