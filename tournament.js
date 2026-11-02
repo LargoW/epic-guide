@@ -66,8 +66,40 @@ const TI = {
     ballotHint: 'Gerät reihum geben. Ergebnisse bleiben verborgen, bis du die Abstimmung beendest. Erneutes Abgeben ersetzt einen Stimmzettel.', paintResult: 'Ergebnis Bemalung', pts: 'Pkt.', firsts: '🥇',
     archiveTitle: 'Archivierte Turniere', archiveNone: 'Keine archivierten Turniere.', restore: 'Wiederherstellen', del: 'Löschen', confirmRestore: 'Dieses Turnier wiederherstellen? Das aktuell aktive wird archiviert.', confirmDel: 'Dieses archivierte Turnier endgültig löschen?', playersN: n => `${n} Spieler`,
   },
+  fr: {
+    intro: 'Organisez un tournoi ou suivez-en un.',
+    orgCard: 'Organiser un tournoi', orgDesc: 'Appariement suisse, tables et classement. Vous saisissez les résultats.',
+    followCard: 'Suivre un tournoi', followDesc: 'Ouvrez le lien ou scannez le QR code de votre organisateur de tournoi (OT). Votre classement, votre prochain adversaire et votre table apparaîtront ici.',
+    create: 'Créer le tournoi', tname: 'Nom du tournoi', rounds: 'Manches', tables: 'Tables', auto: 'auto', scen: 'Scénario',
+    tabs: {players: ['👥', 'Joueurs'], round: ['🎲', 'Manche'], standings: ['🏆', 'Classement'], share: ['📲', 'Partager'], settings: ['⚙', 'Réglages'], paint: ['🎨', 'Peinture'], me: ['🙋', 'Moi'], home: ['🏠', 'Tournoi']},
+    addPlayer: '＋ Ajouter un joueur', pname: 'Nom', army: 'Armée (texte)', list: 'Lien de la liste d’armée (p. ex. Army Forge)', drop: 'Abandon', activate: 'Réactiver', dropped: 'a abandonné',
+    playersHint: 'Les joueurs ayant abandonné ne sont plus appariés. Des joueurs peuvent être ajoutés à tout moment ; ils participent à partir de la manche suivante.',
+    activeCount: n => `${n} joueur${n > 1 ? 's' : ''} actif${n > 1 ? 's' : ''}`, tablesNeed: n => `${n} nécessaire(s) pour les joueurs actuels ; « auto » = autant que nécessaire`, tablesShort: (h, n) => `⚠ Seulement ${h} table(s) définie(s), mais ${n} nécessaire(s). Ajoutez des tables dans Joueurs.`,
+    pair1: 'Apparier la manche 1', pairN: n => `Apparier la manche ${n}`, redo: 'Refaire l’appariement', confirmRedo: 'Annuler les appariements de cette manche et les refaire ?',
+    needPlayers: 'Il faut au moins 2 joueurs actifs.', needResults: 'Confirmez d’abord tous les résultats de cette manche.',
+    table: 'Table', bye: 'Exempt', byeTxt: `Exempt : ${BYE_TP} PT, différence d’objectifs 0`, confirm: '✔ Confirmer le résultat', edit: '✎ Modifier',
+    rematch: '⚠ revanche', tableRep: '⚠ table répétée', pairNote: 'Appariement : système suisse selon le classement (PT, différence d’objectifs, confrontation directe). Pas de revanche ni de table répétée si évitable.',
+    allDone: '🏁 Toutes les manches sont terminées – voir le classement.', t3: 'Victoire au tour 3', t4: 'Tour 4+', vps: 'Égalité : valeur d’armée > 250 PV',
+    none: '–', noRounds: 'Aucune manche appariée pour le moment.', goals: 'Objectifs',
+    cols: ['#', 'Joueur', 'PT', 'DO'], tieNote: 'Classement : points de tournoi, puis différence d’objectifs, puis confrontation directe.',
+    shareTitle: 'Partager avec les joueurs', incLists: 'Inclure les liens des listes d’armée', copy: '📋 Copier le lien', copied: 'Lien copié', shareBtn: '↗ Partager…',
+    shareNote: 'Les joueurs scannent le QR code ou ouvrent le lien et voient le classement, leur adversaire et leur table. Les données restent sur votre appareil : partagez à nouveau après chaque mise à jour.',
+    tooBig: 'Trop volumineux pour un QR code. Copiez le lien et envoyez-le par messagerie, ou désactivez les liens des listes d’armée.',
+    linkSize: n => `${n} caractères`,
+    settingsTitle: 'Réglages du tournoi', finish: 'Terminer et archiver le tournoi', confirmFinish: 'Archiver ce tournoi ? Vous pourrez le restaurer plus tard depuis la page d’accueil du tournoi ou les Réglages.',
+    whoAmI: 'Qui êtes-vous ?', choose: '– choisissez votre nom –', rank: 'Rang', next: 'Prochaine partie', vs: 'contre', notPaired: 'Pas encore apparié. Attendez la manche suivante.',
+    hasBye: 'Vous êtes exempt cette manche.', opponent: 'Adversaire', armyL: 'Armée', listL: 'Liste d’armée', openList: 'Ouvrir la liste d’armée ↗', result: 'Résultat',
+    allPair: 'Tous les appariements', updated: 'Mis à jour', followHint: 'Pour les mises à jour, ouvrez de nouveau le lien de l’OT ou scannez le QR code.', unfollow: 'Ne plus suivre', confirmUnf: 'Ne plus suivre ce tournoi ?',
+    loadErr: 'Le lien du tournoi n’a pas pu être lu.', loaded: 'Données du tournoi chargées', role: {org: 'Organiser', view: 'Suivre'}, playBtn: '▶ Lancer cette partie', playHint: 'Touchez un appariement pour l’ouvrir dans l’onglet Partie.', confirmPlay: 'Une partie est en cours. La remplacer par cet appariement ?', roundL: 'Manche', games: 'Parties',
+    paintTitle: 'Concours de peinture', paintOff: 'Facultatif : les joueurs votent pour leur armée préférée.', paintEnable: 'Activer le concours de peinture', paintDisable: 'Désactiver', paintMode: {ballot: 'Bulletin', manual: 'Saisir le vainqueur'},
+    paintWinner: 'Vainqueur', paintNone: '– aucun –', voted: (a, b) => `${a} / ${b} bulletins déposés`, openVote: '▶ Ouvrir le vote', closeVote: '■ Clore le vote et afficher le résultat', reopenVote: 'Rouvrir le vote',
+    voter: 'Votant', pick: ['🥇 1er (3 pts)', '🥈 2e (2 pts)', '🥉 3e (1 pt)'], submitBallot: '✔ Déposer le bulletin', ballotSaved: 'Bulletin enregistré (masqué)', ballotBad: 'Choisissez un votant et trois armées différentes (pas la sienne).',
+    ballotHint: 'Passez l’appareil à chaque joueur. Les résultats restent masqués jusqu’à la clôture du vote. Un nouveau dépôt remplace le bulletin.', paintResult: 'Résultat de la peinture', pts: 'pts', firsts: '🥇',
+    archiveTitle: 'Tournois archivés', archiveNone: 'Aucun tournoi archivé.', restore: 'Restaurer', del: 'Supprimer', confirmRestore: 'Restaurer ce tournoi ? Le tournoi actif sera archivé.', confirmDel: 'Supprimer définitivement ce tournoi archivé ?', playersN: n => `${n} joueur${n > 1 ? 's' : ''}`,
+  },
 };
 const tt = () => TI[S.lang];
+const co = () => (S.lang === 'fr' ? ' :' : ':');
 
 // ---------- state ----------
 let TD = (() => { const d = readJSON(TOURN_KEY) || {}; return {cur: d.cur || null, archive: d.archive || []}; })();
@@ -431,7 +463,7 @@ function orgRound(t, L) {
         <div class="tp">${T0.tpLabel} ${ta} – ${tb}</div>
         <button data-ta="mdone" data-tv="${mi}" class="${m.done ? '' : 'on'}" style="width:100%;margin-top:8px">${m.done ? L.edit : L.confirm}</button></div>`;
     }).join('');
-    if (r.bye) body += `<div class="card"><b>${L.bye}:</b> ${esc(pn(t, r.bye))}<div class="mut">${L.byeTxt}</div></div>`;
+    if (r.bye) body += `<div class="card"><b>${L.bye}${co()}</b> ${esc(pn(t, r.bye))}<div class="mut">${L.byeTxt}</div></div>`;
   }
   const allDone = ri >= 0 && t.rds[ri].matches.every(m => m.done);
   const anyDone = ri >= 0 && t.rds[ri].matches.some(m => m.done);
@@ -470,7 +502,7 @@ function orgSettings(t, L) {
 function viewFollow() {
   const t = FV.snap, L = tt(), sub = tSub.view;
   const when = t.upd ? new Date(t.upd).toLocaleString(S.lang) : '';
-  const foot = `<div class="mut" style="margin-top:6px">${L.updated}: ${when}<br>${L.followHint}</div>
+  const foot = `<div class="mut" style="margin-top:6px">${L.updated}${co()} ${when}<br>${L.followHint}</div>
     <button data-ta="unfollow" style="width:100%;margin-top:10px">${L.unfollow}</button>`;
   const head = `<div class="card"><h2>🏆 ${esc(t.name || L.tabs.home[1])}</h2><div class="mut">${t.rds.length} / ${t.rounds} ${L.rounds}</div></div>`;
   if (sub === 'standings') return head + standingsCard(t, FV.me) + paintCard(t, paintRes(t)) + foot;
@@ -490,14 +522,14 @@ function viewFollow() {
       next = `<div class="card"><h2>⚔ ${L.next} · ${L.roundL} ${ri + 1}</h2>
         <div class="bigtable">${L.table} ${m.table}</div>
         <div style="text-align:center;font-size:20px;font-weight:700;margin:6px 0">${L.vs} ${esc(o.name)}</div>
-        ${o.army ? `<div class="mut" style="text-align:center">${L.armyL}: ${esc(o.army)}</div>` : ''}
+        ${o.army ? `<div class="mut" style="text-align:center">${L.armyL}${co()} ${esc(o.army)}</div>` : ''}
         ${url ? `<a class="btnlink" href="${esc(url)}" target="_blank" rel="noopener">${L.openList}</a>` : ''}
-        ${m.done ? `<div class="tp" style="margin-top:10px">${L.result}: ${g1} : ${g2} · ${T().tpLabel} ${mine} – ${theirs}</div>` : `<button class="on" data-ta="play" data-tv="${m.a}:${m.b}" style="width:100%;margin-top:10px">${L.playBtn}</button>`}</div>`;
+        ${m.done ? `<div class="tp" style="margin-top:10px">${L.result}${co()} ${g1} : ${g2} · ${T().tpLabel} ${mine} – ${theirs}</div>` : `<button class="on" data-ta="play" data-tv="${m.a}:${m.b}" style="width:100%;margin-top:10px">${L.playBtn}</button>`}</div>`;
     } else if (r.bye === FV.me) next = `<div class="card"><h2>⚔ ${L.next} · ${L.roundL} ${ri + 1}</h2><div>${L.hasBye}</div></div>`;
   }
   const pairs = r ? `<div class="card"><h2>🎲 ${L.allPair} · ${L.roundL} ${ri + 1}</h2><div class="mut" style="margin-bottom:6px">${L.playHint}</div>${r.matches.slice().sort((a, b) => a.table - b.table).map(m =>
     `<button data-ta="play" data-tv="${m.a}:${m.b}" class="pairbtn ${m.a === FV.me || m.b === FV.me ? 'on' : ''}"><span>${L.table} ${m.table}</span><b class="${m.a === FV.me || m.b === FV.me ? '' : 'A'}">${esc(pn(t, m.a))}</b><span>${m.done ? m.gA + ':' + m.gB : L.vs}</span><b class="${m.a === FV.me || m.b === FV.me ? '' : 'B'}">${esc(pn(t, m.b))}</b></button>`).join('')}
-    ${r.bye ? `<div class="mut" style="margin-top:6px">${L.bye}: ${esc(pn(t, r.bye))}</div>` : ''}</div>` : '';
+    ${r.bye ? `<div class="mut" style="margin-top:6px">${L.bye}${co()} ${esc(pn(t, r.bye))}</div>` : ''}</div>` : '';
   const status = `<div class="card"><div class="score" style="font-size:34px"><span>#${me.rank}</span></div>
     <div class="tp">${me.tp} TP · ${L.cols[3]} ${me.gd > 0 ? '+' : ''}${me.gd}</div></div>`;
   return head + select + status + next + pairs + foot;

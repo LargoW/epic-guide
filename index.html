@@ -114,12 +114,13 @@ tr.me{background:rgba(240,180,41,.18)}
 <header>
   <div class="logo">⚔</div>
   <h1><span id="ttl"></span><small id="sub"></small></h1>
-  <div class="lang"><button data-lang="de">DE</button><button data-lang="en">EN</button></div>
+  <div class="lang"><button data-lang="de">DE</button><button data-lang="en">EN</button><button data-lang="fr">FR</button></div>
   <div class="mode" id="mode"></div>
 </header>
 <main id="app"></main>
 <nav id="nav"></nav>
 <div id="toast"></div>
+<script src="fr-ref.js"></script>
 <script src="ref.js"></script>
 <script>
 const KEY = 'epic-guide-v3';
@@ -198,6 +199,7 @@ const I18N = {
       'When is a unit in Cover?',
       'How are ranges measured, from base or miniature?',
       'How you will show if a formation is Broken, on Overwatch or has Marched this turn.',
+      'Are there any army specific special rules?',
       'Anything else you can think of!',
     ],
     deployTitle: 'Deployment', table: 'Table 180 × 120 cm',
@@ -240,6 +242,64 @@ const I18N = {
     cond: {pass: 'They Shall Not Pass', flag: 'Defend The Flag', hold: 'Take And Hold', blitz: 'Blitzkrieg', break: 'Break Their Spirit'},
     early: 'Lead of ≥ 8 VP after round 2 – the game ends early.', tpLabel: 'Tournament points',
   },
+  fr: {
+    title: 'Epic Armageddon', sub: 'Compagnon de jeu',
+    tabs: {warm: ['🔥', 'Échauffement'], setup: ['📐', 'Déploiement'], turn: ['⏱', 'Manche'], beacon: ['🎯', 'Feux'], score: ['🏆', 'Score']},
+    players: 'Joueurs', playerA: 'Joueur A', playerB: 'Joueur B',
+    warmTitle: 'Échauffement de cinq minutes', warmIntro: 'Mettez-vous brièvement d’accord sur ces points avant la partie :',
+    warm: [
+      'La règle « compte comme ».',
+      'Lignes de vue et lignes de tir.',
+      'Arcs de tir des unités.',
+      'Pré-mesures.',
+      'Gabarits : quand une unité est touchée ou non.',
+      'Éléments de terrain : à quoi correspondent-ils sur la table des terrains, quand une unité est-elle dans le terrain ?',
+      'Quand une unité est-elle à couvert ?',
+      'Comment mesure-t-on les portées : depuis le socle ou depuis la figurine ?',
+      'Comment indiquer qu’une formation est démoralisée, en état d’alerte ou a effectué un redéploiement ce tour.',
+      'Des règles spéciales propres aux armées ?',
+      'Tout ce qui vous passe par la tête !',
+    ],
+    deployTitle: 'Déploiement', table: 'Table de 180 × 120 cm',
+    long: 'Grand côté', corner: 'Coin (L)',
+    longDesc: 'Les formations sont déployées à moins de 15 cm de leur bord de table.',
+    cornerDesc: 'Les formations sont déployées à moins de 15 cm de leur bord de table : en L, le long de la moitié du grand côté et de la moitié du petit côté, à partir de votre coin.',
+    scenTitle: 'Scénario', scenFire: 'Allumez les feux', scenTourn: 'Scénario des parties de tournoi',
+    setupTitle: 'Préparation',
+    setup: [
+      'Échanger les listes d’armée et confirmer le scénario',
+      'Installer le décor',
+      'Choisir le déploiement (grand côté ou coin) et les côtés',
+      'Placer 6 objectifs : chaque joueur a 1 objectif Blitz (≥ 15 cm de chaque coin) et 2 autres dans sa moitié (≥ 15 cm de chaque bord) ; jamais en terrain infranchissable',
+      'Déployer les formations (ordre selon les règles NetEA)',
+      'Briefing d’avant-partie / aéronefs et réserves',
+    ],
+    setupFire: 'Préparer six marqueurs recto-verso (possession des objectifs)',
+    turnT: [
+      'Initiative : jet de dé, le gagnant décide qui commence',
+      'Activer les formations à tour de rôle',
+      'Toutes les formations ont agi → Fin du Tour',
+      'À partir du tour 3 : vérifier les conditions de victoire (les deux joueurs peuvent les remplir en même temps)',
+      'Tentatives de ralliement',
+      'Terminer le tour',
+    ],
+    newGame: 'Nouvelle partie', gameSettings: 'Réglages de la partie', skipWarm: 'Passer l’échauffement', skipWarmHint: 'Masque l’onglet Échauffement, p. ex. lorsqu’un règlement de tournoi couvre déjà ces points.', confirmNew: 'Commencer une nouvelle partie ? Toutes les données seront perdues.',
+    round: 'Manche', starts: 'commence', prev: '◀ Retour', next: 'Manche suivante ▶', nextT: 'Tour suivant ▶', toScore: 'Vers le score ▶',
+    turn: [
+      'Initiative : jet de dé, le gagnant décide qui commence',
+      'Activer les formations à tour de rôle',
+      'Après CHAQUE action : vérifier les objectifs (seule une unité ennemie non démoralisée à ≤ 15 cm ⇒ retourner le marqueur)',
+      'Toutes les formations ont agi → Fin du Tour',
+      'Vérifier les conditions de victoire et noter les points (AVANT le ralliement !)',
+      'Tentatives de ralliement – les unités ralliées comptent de nouveau pour le contrôle des objectifs',
+      'Terminer la manche',
+    ],
+    objTitle: 'Marqueurs d’objectif', objRule: 'Un objectif change de propriétaire lorsque, après une action, seule une unité ennemie non démoralisée se trouve à ≤ 15 cm. La possession est conservée même après son départ.',
+    objNames: ['Objectif Blitz', 'Objectif 2', 'Objectif 3'], control: 'Contrôle', turnLbl: 'Tour', vpsMore: 'Écart de valeur d’armée > 250 PV (en cas d’égalité)', vpsNone: 'Non (≤ 250)', t3: 'Victoire au tour 3', t4: 'Victoire au tour 4+', result: 'Résultat', goals: 'Objectifs', draw: 'Égalité', winner: 'Victoire', tournHint: 'Toucher : – → A → B → AB (les deux à la fois). État actuel en fin de tour ; vérification de la victoire à partir du tour 3.',
+    scoreTitle: 'Points de victoire', autoFlag: (n, r) => `🏁 « Défendez le drapeau » attribué automatiquement à ${n.join(' & ')} à la manche ${r} (tous les objectifs propres tenus). À vérifier dans le score.`, scoreHint: 'Toucher : – → A → B → AB (les deux joueurs peuvent marquer en même temps). « Brisez leur moral » une seule fois (2 points).',
+    cond: {pass: 'Ils ne passeront pas', flag: 'Défendez le drapeau', hold: 'Prendre et tenir', blitz: 'Blitzkrieg', break: 'Brisez leur moral'},
+    early: 'Avance de ≥ 8 PV après la manche 2 – la partie se termine prématurément.', tpLabel: 'Points de tournoi',
+  },
 };
 const COND = [['pass', 1], ['flag', 1], ['hold', 1], ['blitz', 1], ['break', 2]];
 const TP = {0:[16,16],1:[18,14],2:[20,12],3:[22,10],4:[24,8],5:[26,6],6:[28,4],7:[30,2],8:[32,0]};
@@ -259,7 +319,7 @@ function loadPrefs() {
   const p = readJSON(PREFS_KEY) || {};
   const n = p.names || {};
   return {
-    lang: p.lang === 'de' ? 'de' : 'en',
+    lang: ['de', 'fr'].includes(p.lang) ? p.lang : 'en',
     scenario: p.scenario === 'tourn' ? 'tourn' : 'fire',
     names: {A: String(n.A || ''), B: String(n.B || '')},
     skipWarm: p.skipWarm === true,
@@ -273,21 +333,29 @@ function savePrefs() {
   try { localStorage.setItem(PREFS_KEY, JSON.stringify({lang: S.lang, scenario: keep.scenario, names: keep.names, skipWarm: S.skipWarm, seen: seenVersion})); } catch (e) {}
 }
 
-const VERSION = '1.2';
+const VERSION = '1.3';
 const REPO = 'https://github.com/LargoW/epic-guide';
 const CHANGELOG = [
+  {v: '1.3', date: '2026-11-02',
+    short: {de: 'Französische Referenztexte ergänzt und überarbeitet.', en: 'French reference text added and refined.', fr: 'Références françaises ajoutées et révisées.'},
+    de: ['Französische Übersetzungen für Referenz, Gelände, Regeln und Turniermodus', 'Französische Geländetabelle separat von der deutschen und englischen Tabelle', 'Französische Spielbegriffe an die offiziellen Formulierungen angepasst'],
+    en: ['French translations for the reference, terrain, rules and tournament mode', 'French terrain table kept separate from the German and English tables', 'French game terminology aligned with official wording'],
+    fr: ['Traductions françaises pour la référence, les terrains, les règles et le mode tournoi', 'Table des terrains française distincte des tableaux allemand et anglais', 'Terminologie française harmonisée avec les formulations officielles']},
   {v: '1.2', date: '2026-11-02',
-    short: {de: 'Neu: Turniermodus mit Schweizer System, Tischzuteilung, Rangliste und Teilen per QR-Code.', en: 'New: Tournament mode with Swiss pairings, table assignment, standings and QR sharing.'},
-    de: ['Turniermodus: Schweizer System ohne Wiederholungen von Gegnern und Tischen', 'Rangliste nach Turnierpunkten, Zieldifferenz und direktem Vergleich', 'Teilen per QR-Code/Link: Spieler sehen Rang, Gegner, Tisch und Armee', 'Armeename und Armeelisten-Link (z. B. Army Forge) pro Spieler', 'Bemalwettbewerb per Stimmzettel (oder Sieger direkt eintragen)', 'Archivierte Turniere können wiederhergestellt werden', 'Paarung antippen, um das Spiel zu starten; Warm-up überspringbar'],
-    en: ['Tournament mode: Swiss pairing without repeated opponents or tables', 'Standings by tournament points, goal difference and head-to-head', 'Share via QR code/link: players see rank, opponent, table and army', 'Army name and army list link (e.g. Army Forge) per player', 'Painting competition by ballot (or just enter the winner)', 'Archived tournaments can be restored', 'Tap a pairing to start that game; option to skip the warm-up']},
+    short: {de: 'Neu: Turniermodus mit Schweizer System, Tischzuteilung, Rangliste und Teilen per QR-Code. Jetzt auch auf Französisch.', en: 'New: Tournament mode with Swiss pairings, table assignment, standings and QR sharing. Now also in French.', fr: 'Nouveau : mode tournoi avec appariement suisse, attribution des tables, classement et partage par QR code. Désormais aussi en français.'},
+    de: ['Turniermodus: Schweizer System ohne Wiederholungen von Gegnern und Tischen', 'Rangliste nach Turnierpunkten, Zieldifferenz und direktem Vergleich', 'Teilen per QR-Code/Link: Spieler sehen Rang, Gegner, Tisch und Armee', 'Armeename und Armeelisten-Link (z. B. Army Forge) pro Spieler', 'Bemalwettbewerb per Stimmzettel (oder Sieger direkt eintragen)', 'Archivierte Turniere können wiederhergestellt werden', 'Paarung antippen, um das Spiel zu starten; Warm-up überspringbar', 'Neue Sprache: Französisch'],
+    en: ['Tournament mode: Swiss pairing without repeated opponents or tables', 'Standings by tournament points, goal difference and head-to-head', 'Share via QR code/link: players see rank, opponent, table and army', 'Army name and army list link (e.g. Army Forge) per player', 'Painting competition by ballot (or just enter the winner)', 'Archived tournaments can be restored', 'Tap a pairing to start that game; option to skip the warm-up', 'New language: French'],
+    fr: ['Mode tournoi : appariement suisse sans adversaires ni tables répétés', 'Classement par points de tournoi, différence d’objectifs et confrontation directe', 'Partage par QR code/lien : les joueurs voient leur rang, adversaire, table et armée', 'Nom d’armée et lien vers la liste d’armée (p. ex. Army Forge) par joueur', 'Concours de peinture par bulletin (ou saisie directe du vainqueur)', 'Les tournois archivés peuvent être restaurés', 'Toucher un appariement pour lancer la partie ; échauffement optionnel', 'Nouvelle langue : français']},
   {v: '1.1', date: '2026-11-02',
-    short: {de: 'Einstellungen werden gespeichert.', en: 'Your preferences are now saved.'},
+    short: {de: 'Einstellungen werden gespeichert.', en: 'Your preferences are now saved.', fr: 'Vos préférences sont désormais enregistrées.'},
     de: ['Sprache, Szenario und Spielernamen werden lokal gespeichert', 'Standardsprache ist Englisch', 'Startbildschirm mit Neuigkeiten und vollständigem Changelog', 'Link zum GitHub-Repository für Feature-Wünsche und Fehlerberichte'],
-    en: ['Language, scenario and player names are saved locally', 'Default language is English', 'Splash screen with news and full changelog', 'Link to the GitHub repository for feature requests and bug reports']},
+    en: ['Language, scenario and player names are saved locally', 'Default language is English', 'Splash screen with news and full changelog', 'Link to the GitHub repository for feature requests and bug reports'],
+    fr: ['Langue, scénario et noms des joueurs enregistrés localement', 'La langue par défaut est l’anglais', 'Écran d’accueil avec nouveautés et journal complet des modifications', 'Lien vers le dépôt GitHub pour les demandes de fonctionnalités et les rapports de bogues']},
 ];
 const SPLASH = {
   de: {news: 'Neu', go: 'Los geht’s', fb: 'Feedback & Fehler melden', info: 'Neuigkeiten', all: 'Kompletter Changelog', back: 'Zurück', log: 'Changelog'},
   en: {news: 'What’s new', go: 'Let’s go', fb: 'Feature requests & bug reports', info: 'What’s new', all: 'Full changelog', back: 'Back', log: 'Changelog'},
+  fr: {news: 'Nouveautés', go: 'C’est parti', fb: 'Suggestions & rapports de bogues', info: 'Nouveautés', all: 'Journal complet', back: 'Retour', log: 'Journal des modifications'},
 };
 function splashHtml() {
   const s = SPLASH[S.lang], t = T();
@@ -532,11 +600,11 @@ function render() {
   document.querySelectorAll('[data-lang]').forEach(b => b.classList.toggle('on', b.dataset.lang === S.lang));
   const tabs = TABS.filter(k => (isFire() || k !== 'beacon') && (!S.skipWarm || k !== 'warm'));
   if (tab !== 'ref' && tab !== 'tourn' && !tabs.includes(tab)) tab = 'setup';
-  const inRef = tab === 'ref', inT = tab === 'tourn', de = S.lang === 'de';
+  const inRef = tab === 'ref', inT = tab === 'tourn', ml = {de: ['Spiel', 'Turnier', 'Referenz'], en: ['Game', 'Tournament', 'Reference'], fr: ['Partie', 'Tournoi', 'Référence']}[S.lang];
   document.getElementById('mode').innerHTML =
-    `<button data-mode="game" class="${inRef || inT ? '' : 'on'}">🎮 ${de ? 'Spiel' : 'Game'}</button>` +
-    `<button data-mode="tourn" class="${inT ? 'on' : ''}">🏆 ${de ? 'Turnier' : 'Tournament'}</button>` +
-    `<button data-mode="ref" class="${inRef ? 'on' : ''}">📖 ${de ? 'Referenz' : 'Reference'}</button>`;
+    `<button data-mode="game" class="${inRef || inT ? '' : 'on'}">🎮 ${ml[0]}</button>` +
+    `<button data-mode="tourn" class="${inT ? 'on' : ''}">🏆 ${ml[1]}</button>` +
+    `<button data-mode="ref" class="${inRef ? 'on' : ''}">📖 ${ml[2]}</button>`;
   document.getElementById('nav').innerHTML = inT ? tournNav() : tabs.map(k =>
     `<button data-t="${k}" class="${k === tab ? 'on' : ''}"><span>${t.tabs[k][0]}</span>${t.tabs[k][1]}</button>`).join('');
   document.getElementById('app').innerHTML = {warm: viewWarm, setup: viewSetup, turn: viewTurn, beacon: viewBeacon, score: viewScore, ref: viewRef, tourn: () => tournView()}[tab]();

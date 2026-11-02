@@ -2,7 +2,7 @@
 let refSec = 'goals', refLay = 0, refGrid = true, refScen = null;
 
 const D = (de, en) => ({de, en});
-const tx = o => (typeof o === 'string' ? o : o[S.lang]);
+const tx = o => (typeof o === 'string' ? o : o[S.lang] || (S.lang === 'fr' && typeof FR_REF !== 'undefined' && FR_REF[o.en]) || o.en);
 
 const REF_SECS = {
   goals: ['🏁', D('Ziele', 'Goals')],
@@ -69,7 +69,7 @@ const REF = {
       D('Keine Bodeneinheit sieht durch ein Geländestück, außer sie steht darin. Aufgetauchte Antigravfahrzeuge und Einheiten auf Hügeln sehen darüber, aber nur Einheiten, die weiter vom Rand entfernt sind als sie selbst. Flugzeuge sehen immer über alles.', 'No ground unit sees through a terrain piece unless it is inside. Skimmers and units on hills see over it, but only units farther from the edge than themselves. Aircraft always see over everything.'),
       D('In Deckung: Sicht-blockierendes Gelände schützt Einheiten darin oder teilweise dahinter vor dem ganzen schießenden Verband: −1 auf den Trefferwurf und ein Deckungswurf (statt, nicht zusätzlich zum Rüstungswurf).', 'In cover: line-blocking terrain shields units in or partly behind it from the whole firing formation: −1 to hit and a cover save (instead of, not in addition to, the armour save).'),
     ]},
-    {table: {head: [D('Gelände', 'Terrain'), 'INF', 'AV', D('Kriegsm.', 'WE'), D('Blockt', 'Blocks LOS')], rows: [
+    {table: {id: 'terrain', head: [D('Gelände', 'Terrain'), 'INF', 'AV', D('Kriegsm.', 'WE'), D('Blockt', 'Blocks LOS')], rows: [
       [D('Großes Gebäude', 'Large building'), D('Deckung 4+', 'Cover 4+'), D('Unpassierbar', 'Impassable'), D('Unpassierbar', 'Impassable'), D('Ja', 'Yes')],
       [D('Stadtgebiet', 'Urban area'), D('Deckung 5+', 'Cover 5+'), D('Schwierig', 'Difficult'), D('Schwierig', 'Difficult'), D('Ja', 'Yes')],
       [D('Ruinen, Trümmer', 'Ruins, rubble'), D('Deckung 4+', 'Cover 4+'), D('Gefährlich', 'Dangerous'), D('Gefährlich', 'Dangerous'), D('Ja', 'Yes')],
@@ -281,7 +281,7 @@ function refBlock(b) {
   if (b.ul) return `<ul class="rl">${b.ul.map(i => `<li>${esc(tx(i))}</li>`).join('')}</ul>`;
   if (b.ol) return `<ol class="rl">${b.ol.map(i => `<li>${esc(tx(i))}</li>`).join('')}</ol>`;
   if (b.table) {
-    const {head, rows} = b.table;
+    const {head, rows} = (S.lang === 'fr' && b.table.id && typeof FR_TABLES !== 'undefined' && FR_TABLES[b.table.id]) || b.table;
     return `<div class="rt"><table><tr>${head.map(h => `<th>${esc(tx(h))}</th>`).join('')}</tr>` +
       rows.map(r => `<tr>${r.map(c => `<td>${esc(tx(c))}</td>`).join('')}</tr>`).join('') + `</table></div>`;
   }
@@ -291,11 +291,12 @@ function refBlock(b) {
 function viewLayouts() {
   const l = LAYOUTS[refLay], t = T();
   const used = [...new Set(layoutPieces(l).map(p => p[0]).concat(l.river ? ['river'] : []))];
-  const msg = S.lang === 'de'
-    ? ['Gleichgewicht: Die Layouts sind 180°-punktsymmetrisch – beide Seiten haben identisches Gelände, egal ob Lange Kante oder Ecke. 12 Stücke (2 je 60-cm-Quadrat), 15–30 cm groß, 0–4 Stücke je Quadrat. Ziele und Straßen werden danach platziert.',
-       'Raster', 'Zahl = Stücke je Quadrat']
-    : ['Balance: layouts are 180° point-symmetric – both sides get identical terrain whether you use Long Edge or Corner. 12 pieces (2 per 60 cm square), 15–30 cm each, 0–4 per square. Objectives and roads are placed afterwards.',
-       'Grid', 'Number = pieces per square'];
+  const msg = {de: ['Gleichgewicht: Die Layouts sind 180°-punktsymmetrisch – beide Seiten haben identisches Gelände, egal ob Lange Kante oder Ecke. 12 Stücke (2 je 60-cm-Quadrat), 15–30 cm groß, 0–4 Stücke je Quadrat. Ziele und Straßen werden danach platziert.',
+       'Raster', 'Zahl = Stücke je Quadrat'],
+    fr: ['Équilibre : les dispositions sont symétriques par rotation de 180° – les deux camps ont un décor identique, que vous jouiez sur le grand côté ou en coin. 12 éléments (2 par carré de 60 cm), de 15 à 30 cm, 0 à 4 par carré. Les objectifs et les routes sont placés ensuite.',
+       'Grille', 'Nombre = éléments par carré'],
+    en: ['Balance: layouts are 180° point-symmetric – both sides get identical terrain whether you use Long Edge or Corner. 12 pieces (2 per 60 cm square), 15–30 cm each, 0–4 per square. Objectives and roads are placed afterwards.',
+       'Grid', 'Number = pieces per square']}[S.lang];
   return `<div class="laygrid">${LAYOUTS.map((x, i) => `<button data-lay="${i}" class="${i === refLay ? 'on' : ''}">${esc(tx(x.name))}</button>`).join('')}</div>
     <div class="row" style="margin-bottom:10px">${['long', 'corner'].map(k => `<button data-dep="${k}" class="${S.deploy === k ? 'on' : ''}">${t[k]}</button>`).join('')}
       <button data-grid class="${refGrid ? 'on' : ''}">${msg[1]}</button></div>
@@ -314,7 +315,8 @@ function viewRef() {
     `<button data-rscen="${k}" class="${sc === k ? 'on' : ''}">${n}</button>`).join('')}</div>` : '';
   const blocks = refSec === 'goals' ? REF[sc === 'fire' ? 'goalsFire' : 'goalsTourn'] : REF[refSec];
   const body = refSec === 'layouts' ? viewLayouts() : toggle + blocks.map(refBlock).join('');
-  return `<div class="card"><h2>📖 ${S.lang === 'de' ? 'Referenz' : 'Reference'}</h2><div class="chips">${chips}</div></div>
+  const rl = {de: ['Referenz', '✕ Referenz schließen'], en: ['Reference', '✕ Close reference'], fr: ['Référence', '✕ Fermer la référence']}[S.lang];
+  return `<div class="card"><h2>📖 ${rl[0]}</h2><div class="chips">${chips}</div></div>
     <div class="card refbody">${body}</div>
-    <button data-refclose style="width:100%">${S.lang === 'de' ? '✕ Referenz schließen' : '✕ Close reference'}</button>`;
+    <button data-refclose style="width:100%">${rl[1]}</button>`;
 }
